@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Posts</h1>
+
+{% for post in posts %}
+<h2><a href="{{ url_for('main.post', post_id=post.id) }}">{{ post.title }}</a></h2>
+<p>{{ post.content }}</p>
+{% endfor %}
+
+
+{% endblock %}
