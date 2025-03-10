@@ -73,3 +73,15 @@ input[type="submit"]:hover {
   background-color: #23527c;
 }
 */
+.index_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.index_table th, .index_table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+}
