@@ -7,14 +7,14 @@
         {% else %}
         <title> WaypointsAndWonders</title>
         {% endif %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
     </head>
     <body>
         <div>
             <a href="{{ url_for('main.home') }}">
-            WaypointsAndWonders
+                <h3 style="color: #337ab7">WaypointsAndWonders</h3>
             </a>
-
         </div>
         <hr>
         {% with messages = get_flashed_messages() %}

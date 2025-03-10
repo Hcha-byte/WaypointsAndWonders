@@ -1,7 +1,6 @@
-/*
 body {
-  background-color: lightgray;
-  font-family: comic sans ms;
+  background-color: cream;
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   margin-left: 10px;
@@ -33,7 +32,7 @@ p {
   margin-left: 10px;
 }
 
-
+/*
 img {
   max-width: 100%;
   height: auto;
