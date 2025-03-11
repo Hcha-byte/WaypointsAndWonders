@@ -5,7 +5,7 @@ from .database import db
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
-
+from werkzeug.middleware.proxy_fix import ProxyFix
 from app.models import User
 
 
@@ -17,6 +17,9 @@ def create_app():
 
     # Load configuration
     app.config.from_object('config.Config')
+    app.config["SESSION_COOKIE_SECURE"] = False  # Disable secure cookies for testing
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
     # Initialize database
     db.init_app(app)
@@ -26,6 +29,9 @@ def create_app():
     login_manager.init_app(app)
     
     login_manager.user_loader(User.user_loder)
+    login_manager.login_view = "main.login"
+    
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
     # Register Blueprints (for routes)
     from app.routes import main
