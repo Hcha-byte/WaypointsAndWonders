@@ -8,7 +8,7 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
+  background-color: #e6e6e6;
   margin: 0;
   padding: 0;
 }
@@ -25,6 +25,15 @@ body {
 .header h1 {
   font-size: 24px;
   margin-bottom: 10px;
+}
+
+.header a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.header a:hover {
+  color: #404040;
 }
 
 /* Navigation Styles */
@@ -52,7 +61,7 @@ body {
 }
 
 .nav a:hover {
-  color: #cccccc;
+  color: #0083b3;
 }
 
 /* Content Styles */
@@ -75,6 +84,12 @@ body {
   margin-bottom: 20px;
 }
 
+.content ul {
+  list-style: disc;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
 /* Form Styles */
 
 .form {
@@ -90,8 +105,48 @@ body {
   margin-bottom: 10px;
 }
 
-.form input[type="text"], .form input[type="email"], .form textarea {
-  width: 100%;
+.form input[type="text"], .form input[type="email"], .form textarea{
+  width: 20%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #cccccc;
+}
+
+.form input[type="checkbox"] {
+  appearance: none; /* Removes default checkbox styling */
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border: 2px solid #00698f;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+}
+
+.form input[type="checkbox"]:checked {
+  background-color: #00698f;
+  border-color: #004e73;
+}
+
+.form input[type="checkbox"]:checked::after {
+  content: "✔";
+  font-size: 16px;
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.form input[type="checkbox"]:hover {
+  border-color: #0091e6;
+}
+
+
+.form input[type="password"] {
+  width: 20%;
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #cccccc;
@@ -124,6 +179,11 @@ body {
 
 .button:hover {
   background-color: #005a8f;
+}
+
+.button a {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 /* Footer Styles */
@@ -160,4 +220,17 @@ body {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ccc;
+}
+
+/* Flashed Messages Styles */
+
+.flash {
+  margin: 20px;
+  color: #ffffff;
+  background-color: #f2c14e;
+  padding: 10px;
+  border-radius: 0 0 5px 5px;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }

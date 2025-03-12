@@ -113,6 +113,10 @@ def logout():
 def password_reset():
 	if request.method == 'POST':
 		email = request.form['email']
+		if not email:
+			flash('Please enter your email', 'danger')
+			return  redirect(url_for('main.password_reset'))
+		
 		user = User.query.filter_by(email=email).first()
 		if user:
 			# Generate a secure token
@@ -132,5 +136,5 @@ def password_reset():
 		else:
 			flash('Email not found', 'danger')
 			return redirect(url_for('main.password_reset'))
-	
+	# TODO Make the html for pw reset
 	return render_template('password_reset.html', title='Password Reset')

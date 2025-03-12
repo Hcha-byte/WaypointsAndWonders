@@ -13,7 +13,7 @@
     <body>
         <div class="header">
             <a href="{{ url_for('main.home') }}">
-                <h3 style="color: #337ab7">WaypointsAndWonders</h3>
+                <h1>WaypointsAndWonders</h1>
             </a>
         </div>
         <nav>
@@ -27,13 +27,14 @@
         </nav>
         <hr>
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+            {% if messages %}
+
+                        {% for message in messages %}
+                        <div class="flash">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+            {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
     </body>
