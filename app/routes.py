@@ -1,3 +1,5 @@
+from sqlite3 import IntegrityError
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, login_user, logout_user, current_user
 
@@ -81,13 +83,17 @@ def signup():
 		if password != confirm_password:
 			flash('Passwords do not match', 'danger')
 			return redirect(url_for('main.signup'))
-		
-		user = User()
-		user.username = username
-		user.email = email
-		user.set_password(password)
-		db.session.add(user)
-		db.session.commit()
+		try:
+			user = User()
+			user.username = username
+			user.email = email
+			user.set_password(password)
+			db.session.add(user)
+			db.session.commit()
+		except IntegrityError:
+			db.session.rollback()
+			flash('Email already registered. Please log in or chose another email', 'danger')
+			return redirect(url_for('main.login'))
 		return redirect(url_for('main.login'))
 	return render_template('signup.html', title='Sign Up')
 

@@ -17,7 +17,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    password_hash= db.Column(db.String(60), nullable=False)
+    password_hash = db.Column(db.String, nullable=False)
     
     def make_admin(self):
         self.is_admin = True
