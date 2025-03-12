@@ -17,9 +17,6 @@ def create_app():
 
     # Load configuration
     app.config.from_object('config.Config')
-    app.config["SESSION_COOKIE_SECURE"] = False  # Disable secure cookies for testing
-    app.config["SESSION_COOKIE_HTTPONLY"] = True
-    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
     # Initialize database
     db.init_app(app)

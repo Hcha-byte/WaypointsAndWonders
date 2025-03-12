@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 
 from app import db
 from app.models import Post, User
@@ -43,6 +43,10 @@ def add_post():
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
+	if current_user.is_authenticated:
+		flash('You are already logged in', 'info')
+		return redirect(url_for('main.home'))
+	
 	if request.method == 'POST':
 		username = request.form['username']
 		password = request.form['password']
@@ -55,7 +59,11 @@ def login():
 		user = User.query.filter_by(username=username).first()
 		if user and user.check_password(password):
 			login_user(user, remember=remember_me)
-			return redirect(url_for('main.home'))
+			next_url = request.args.get('next')
+			if next_url:
+				return redirect(next_url)
+			else:
+				return redirect(url_for('main.home'))
 	return render_template('login.html', title= 'Login')
 
 @main.route('/signup', methods=['GET', 'POST'])
