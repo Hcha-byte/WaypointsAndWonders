@@ -1,11 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
-from flask_migrate import Migrate
 from .database import db
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import os
-from werkzeug.middleware.proxy_fix import ProxyFix
 from app.models import User
 
 
@@ -17,18 +13,34 @@ def create_app():
 
     # Load configuration
     app.config.from_object('config.Config')
+    
+    # Configure Flask-Mail with your email provider
+    # TODO configur for WPAW email
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Change for your provider
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = 'harveychaney@gmail.com'  # Replace with your email
+    app.config['MAIL_PASSWORD'] = 'wgcf zsic szsu bwmf'  # Use an App Password if using Gmail
+    app.config['MAIL_DEFAULT_SENDER'] = 'harveychaney@gmail.com'
+    
 
+    
     # Initialize database
     db.init_app(app)
     migrate = Migrate(app, db)
-
+    
+    # Initialize login
     login_manager = LoginManager()
     login_manager.init_app(app)
     
+    # Register user loader
     login_manager.user_loader(User.user_loder)
     login_manager.login_view = "main.login"
     
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
+
+    # Import and initialize extensions
+    from .extensions import mail
+    mail.init_app(app)
 
     # Register Blueprints (for routes)
     from app.routes import main

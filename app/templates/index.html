@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Posts</h1>
+<h1 class="content">Posts</h1>
 
 <table class="index_table" >
     <tr>
@@ -17,5 +17,5 @@
 {% endfor %}
 </table>
 
-<p><a href="{{ url_for('main.add_post') }}">Add Post</a></p>
+<p class="content"><a href="{{ url_for('main.add_post') }}">Add Post</a></p>
 {% endblock %}

@@ -1,10 +1,15 @@
+import os
 from sqlite3 import IntegrityError
 
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, login_user, logout_user, current_user
-
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Message
 from app import db
+from .extensions import mail
 from app.models import Post, User
+
+s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
 
 main = Blueprint('main', __name__)
 
@@ -34,7 +39,7 @@ def add_post():
 		if not title or not content:
 			flash('Please enter both title and content', 'danger')
 		else:
-			post = Post(title=title, content=content)
+			post = Post(title=title, content=content, user_id=current_user.id)
 			db.session.add(post)
 			db.session.commit()
 			flash('Your post has been published!', 'success')
@@ -103,3 +108,29 @@ def signup():
 def logout():
 	logout_user()
 	return redirect(url_for('main.home'))
+
+@main.route('/password', methods=['GET', 'POST'])
+def password_reset():
+	if request.method == 'POST':
+		email = request.form['email']
+		user = User.query.filter_by(email=email).first()
+		if user:
+			# Generate a secure token
+			token = s.dumps(email, salt='password-reset-salt')
+			
+			# Create reset link
+			reset_url = url_for('main.password_reset_token', token=token, _external=True)
+			
+			# Send the email
+			msg = Message('Password Reset Request - WayPointsAndWonders',
+			              recipients=[email])
+			msg.body = render_template('password_email.html', reset_url=reset_url)
+			mail.send(msg)
+			
+			flash('Check your email for password reset instructions.', 'info')
+			return redirect(url_for('main.index'))
+		else:
+			flash('Email not found', 'danger')
+			return redirect(url_for('main.password_reset'))
+	
+	return render_template('password_reset.html', title='Password Reset')
