@@ -90,6 +90,30 @@ body {
   margin-bottom: 20px;
 }
 
+.content table {
+  width: 100%;
+  padding-right: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: 10px;
+  overflow-x: auto;
+  text-align: left;
+}
+
+.content td, .content th {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.content a {
+  color: #00698f;
+  text-decoration: none;
+}
+
+.content a:hover {
+  color: #0091e6;
+}
+
 /* Form Styles */
 
 .form {
@@ -208,18 +232,6 @@ body {
 
 .footer a:hover {
   color: #cccccc;
-}
-.index_table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  margin-left: 10px;
-}
-
-.index_table th, .index_table td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ccc;
 }
 
 /* Flashed Messages Styles */

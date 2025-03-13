@@ -4,18 +4,20 @@
 {% block content %}
 <h1 class="content">Posts</h1>
 
-<table class="index_table" >
+<div  class="content">
+<table>
     <tr>
         <th>Title</th>
-        <th>Content</th>
+        <th style="width: 50%">Content</th>
     </tr>
 {% for post in posts %}
     <tr>
         <td><a href="{{ url_for('main.post', post_id=post.id) }}">{{ post.title }}</a></td>
-        <td>{{ post.content }}<br></td>
+        <td>{{ post.content }}</td>
     </tr>
 {% endfor %}
 </table>
+</div>
 
 <p class="content"><a href="{{ url_for('main.add_post') }}">Add Post</a></p>
 {% endblock %}
