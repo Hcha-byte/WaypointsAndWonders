@@ -1,7 +1,7 @@
 import os
 from sqlite3 import IntegrityError
 
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required, login_user, logout_user, current_user
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
@@ -160,3 +160,29 @@ def password_reset_token(token):
 			flash('Your password has been updated.', 'success')
 			return redirect(url_for('main.login'))
 	return render_template('password/password_reset_phase2.html', title='Reset Password')
+
+@main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(post_id):
+	return render_template('error.html', title='Edit Post', functionality='Edit Post', message='This feature has not been implemented yet, please contact an admin if you need this feature')
+	# noinspection PyUnreachableCode
+	post = Post.query.get_or_404(post_id)
+	if post.user_id != current_user.id:
+		abort(403)
+	if request.method == 'POST':
+		post.title = request.form['title']
+		post.content = request.form['content']
+		db.session.commit()
+		return redirect(url_for('main.post', post_id=post.id))
+	return render_template('edit_post.html', title='Edit Post', post=post)
+
+
+@main.route('/delete/<int:post_id>', methods=['POST', 'GET'])
+@login_required
+def delete_post(post_id):
+	post = Post.query.get_or_404(post_id)
+	if post.user_id != current_user.id:
+		abort(403)
+	db.session.delete(post)
+	db.session.commit()
+	return redirect(url_for('main.home'))
