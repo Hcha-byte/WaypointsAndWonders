@@ -109,8 +109,11 @@ def logout():
 	logout_user()
 	return redirect(url_for('main.home'))
 
+
+# noinspection PyUnreachableCode
 @main.route('/password', methods=['GET', 'POST'])
 def password_reset():
+	return render_template('error.html', title='Password Reset', functionality='Password Reset', message='This feature has not been implemented yet, please contact an admin if you need this feature')
 	if request.method == 'POST':
 		email = request.form['email']
 		if not email:
@@ -119,22 +122,41 @@ def password_reset():
 		
 		user = User.query.filter_by(email=email).first()
 		if user:
+
 			# Generate a secure token
 			token = s.dumps(email, salt='password-reset-salt')
-			
+	
 			# Create reset link
 			reset_url = url_for('main.password_reset_token', token=token, _external=True)
-			
+	
 			# Send the email
 			msg = Message('Password Reset Request - WayPointsAndWonders',
-			              recipients=[email])
-			msg.body = render_template('password_email.html', reset_url=reset_url)
+							  recipients=[email])
+			msg.body = render_template('email/password_email.html', reset_url=reset_url)
 			mail.send(msg)
-			
+	
 			flash('Check your email for password reset instructions.', 'info')
 			return redirect(url_for('main.index'))
 		else:
 			flash('Email not found', 'danger')
 			return redirect(url_for('main.password_reset'))
-	# TODO Make the html for pw reset
-	return render_template('password_reset.html', title='Password Reset')
+
+	return render_template('password/password_reset.html', title='Password Reset')
+
+
+@main.route('/reset/<token>', methods=['GET', 'POST'])
+def password_reset_token(token):
+	try:
+		email = s.loads(token, salt='password-reset-salt', max_age=3600)  # Token expires in 1 hour
+	except:
+		flash('Invalid or expired token.', 'danger')
+		return redirect(url_for('main.password_reset'))
+
+	if request.method == 'POST':
+		new_password = request.form['password']
+		user = User.query.filter_by(email=email).first()
+		if user:
+			user.set_password(new_password)
+			flash('Your password has been updated.', 'success')
+			return redirect(url_for('main.login'))
+	return render_template('password/password_reset_phase2.html', title='Reset Password')

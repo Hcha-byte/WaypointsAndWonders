@@ -35,9 +35,6 @@ class User(db.Model, UserMixin):
         self.email = email
         db.session.commit()
     
-    def change_password(self, password):
-        self.password_hash = generate_password_hash(password)
-        db.session.commit()
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

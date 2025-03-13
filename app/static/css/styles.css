@@ -234,3 +234,20 @@ body {
   font-size: 16px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Error Messages Styles */
+
+.error {
+  margin: 20px;
+  color: #ffffff;
+  background-color: #f2c14e;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.error p {
+  margin: 0;
+  font-size: 20px;
+}
