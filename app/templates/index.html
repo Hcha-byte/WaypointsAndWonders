@@ -15,7 +15,11 @@
     <tr>
         <td><a href="{{ url_for('main.post', post_id=post.id) }}">{{ post.title }}</a></td>
         <td>{{ post.content }}</td>
+	    {% if post.image_url %}
 	    <td><img src="{{ post.image_url }}" alt="Post Image" style="max-width: 100px; max-height: 100px;"></td>
+	    {% else %}
+	    <td>No image</td>
+	    {% endif %}
     </tr>
 {% endfor %}
 </table>
