@@ -9,13 +9,14 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    image_url = db.Column(db.String, nullable=True)
 
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    image_url = db.Column(db.String, nullable=False, default='https://res.cloudinary.com/dao2ekwrd/image/upload/v1741910294/WPAW/z9hnukyaz0f0i7osnamz.jpg')
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     password_hash = db.Column(db.String, nullable=False)
     
@@ -24,7 +25,7 @@ class User(db.Model, UserMixin):
         db.session.commit()
     
     def change_image(self, image_file):
-        self.image_file = image_file
+        self.image_url = image_file
         db.session.commit()
         
     def change_username(self, username):

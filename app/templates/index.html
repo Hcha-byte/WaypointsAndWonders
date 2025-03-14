@@ -2,22 +2,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="content">Posts</h1>
+<h1 class="content" xmlns="http://www.w3.org/1999/html">Posts</h1>
 
 <div  class="content">
 <table>
     <tr>
         <th>Title</th>
         <th style="width: 50%">Content</th>
+	    <th>Image</th>
     </tr>
 {% for post in posts %}
     <tr>
         <td><a href="{{ url_for('main.post', post_id=post.id) }}">{{ post.title }}</a></td>
         <td>{{ post.content }}</td>
+	    <td><img src="{{ post.image_url }}" alt="Post Image" style="max-width: 100px; max-height: 100px;"></td>
     </tr>
 {% endfor %}
 </table>
 </div>
+{% if current_user.is_admin %}
+	<p class="content"><button type="button" class="button"><a href="{{ url_for('main.add_post') }}">Add Post</a></button></p>
+{% endif %}
 
-<p class="content"><a href="{{ url_for('main.add_post') }}">Add Post</a></p>
 {% endblock %}

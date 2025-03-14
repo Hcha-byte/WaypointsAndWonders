@@ -1,10 +1,9 @@
 import os
-from sqlite3 import IntegrityError
-
 from flask import Blueprint, render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required, login_user, logout_user, current_user
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
+import cloudinary.uploader
 from app import db
 from .extensions import mail
 from app.models import Post, User
@@ -35,15 +34,27 @@ def add_post():
 
 		title = request.form['title']
 		content = request.form['content']
+		image = request.files['image']
 
 		if not title or not content:
 			flash('Please enter both title and content', 'danger')
 		else:
-			post = Post(title=title, content=content, user_id=current_user.id)
-			db.session.add(post)
-			db.session.commit()
-			flash('Your post has been published!', 'success')
-			return redirect(url_for('main.home'))
+			
+			if image:
+				upload_result = cloudinary.uploader.upload(image)
+				image_url = upload_result["secure_url"]  # Get the Cloudinary URL
+				
+				# Save post with image URL in database
+				new_post = Post(title=title, content=content, image_url=image_url, user_id=current_user.id)
+				db.session.add(new_post)
+				db.session.commit()
+			else:
+				# Save post without image URL in database
+				post = Post(title=title, content=content, user_id=current_user.id)
+				db.session.add(post)
+				db.session.commit()
+				flash('Your post has been published!', 'success')
+				return redirect(url_for('main.home'))
 	
 	return render_template('add_post.html', title='Add Post')
 
@@ -95,7 +106,7 @@ def signup():
 			user.set_password(password)
 			db.session.add(user)
 			db.session.commit()
-		except IntegrityError:
+		except:
 			db.session.rollback()
 			flash('Email already registered. Please log in or chose another email', 'danger')
 			return redirect(url_for('main.login'))
@@ -164,8 +175,6 @@ def password_reset_token(token):
 @main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def edit_post(post_id):
-	return render_template('error.html', title='Edit Post', functionality='Edit Post', message='This feature has not been implemented yet, please contact an admin if you need this feature')
-	# noinspection PyUnreachableCode
 	post = Post.query.get_or_404(post_id)
 	if post.user_id != current_user.id:
 		abort(403)
@@ -185,4 +194,17 @@ def delete_post(post_id):
 		abort(403)
 	db.session.delete(post)
 	db.session.commit()
+	flash('Your post has been deleted!', 'success')
 	return redirect(url_for('main.home'))
+
+
+# noinspection PyUnreachableCode
+@main.route('/profile/<int:user_id>', methods=['GET', 'POST'])
+def profile(user_id):
+	return render_template('error.html', title='Profile', functionality='Profile',
+	                       message='This feature has not been implemented yet, please contact an admin if you need this feature')
+	if current_user.is_anonymous or current_user.id != user_id:
+		return render_template('error.html', title='Profile', functionality='Profile', message='You do not have access to this page')
+	user = User.query.get_or_404(user_id)
+	# TODO: Add profile page (profile.html, takes user= User())
+	return render_template('profile.html', title='Profile', user=user)

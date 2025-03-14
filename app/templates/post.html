@@ -6,6 +6,11 @@
     <h1>{{ post.title }}</h1>
 	<br>
     <p>{{ post.content }}</p>
+	{% if post.image_url %}
+		<div>
+			<img src="{{ post.image_url }}" style="align: right">
+		</div>
+	{% endif %}
 	{% if post.user_id == current_user.id or current_user.is_admin %}
 			<button type="button" class="button"><a href="{{ url_for('main.edit_post', post_id=post.id) }}">Edit</a></button>
 			<button type="button" class="button"><a href="{{ url_for('main.delete_post', post_id=post.id) }}">Delete</a></button>
