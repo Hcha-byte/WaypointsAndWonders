@@ -13,57 +13,64 @@ body {
   padding: 0;
 }
 
-/* Header Styles */
-
-.header {
-  background-color: #00698f;
-  color: #ffffff;
-  padding: 20px;
-  text-align: center;
+/* Merged Navbar Styles */
+.navbar {
+  background-color: #00698f; /* Match header background */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  height: 60px;
 }
 
-.header h1 {
+/* Website Title */
+.navbar__brand a {
   font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.header a {
-  color: #ffffff;
+  font-weight: bold;
   text-decoration: none;
+  color: white;
 }
 
-.header a:hover {
+.navbar__brand a:hover {
   color: #404040;
 }
 
-/* Navigation Styles */
-
-.nav {
-  background-color: #333333;
-  padding: 10px;
-  text-align: right;
+/* Navigation Links */
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-.nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav li {
-  display: inline-block;
-  margin-right: 20px;
-}
-
-.nav a {
+.navbar__links a {
   color: #ffffff;
   text-decoration: none;
+  margin-left: 20px;
+  font-size: 16px;
 }
 
-.nav a:hover {
-  color: #0083b3;
+.navbar__links a:hover {
+  color: #404040;
 }
 
+/* Profile Image */
+.profile {
+  display: flex;
+  align-items: center; /* Ensures text and image align properly */
+  gap: 10px; /* Space between username and image */
+}
+
+.profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white; /* Optional */
+}
+
+.profile img:hover {
+  border: 2px solid #404040;
+}
 /* Content Styles */
 
 .content {
