@@ -143,7 +143,9 @@ def password_reset():
 			msg = Message('Password Reset Request - WayPointsAndWonders',
 							  recipients=[email])
 			msg.body = render_template('email/password_email.txt', reset_url=reset_url)
+			
 			msg.html = render_template('email/password_email.html', reset_url=reset_url)
+			
 			mail.send(msg)
 	
 			flash('Check your email for password reset instructions.', 'info')
