@@ -124,7 +124,6 @@ def logout():
 # noinspection PyUnreachableCode
 @main.route('/password', methods=['GET', 'POST'])
 def password_reset():
-	return render_template('error.html', title='Password Reset', functionality='Password Reset', message='This feature has not been implemented yet, please contact an admin if you need this feature')
 	if request.method == 'POST':
 		email = request.form['email']
 		if not email:
@@ -143,11 +142,12 @@ def password_reset():
 			# Send the email
 			msg = Message('Password Reset Request - WayPointsAndWonders',
 							  recipients=[email])
-			msg.body = render_template('email/password_email.html', reset_url=reset_url)
+			msg.body = render_template('email/password_email.txt', reset_url=reset_url)
+			msg.html = render_template('email/password_email.html', reset_url=reset_url)
 			mail.send(msg)
 	
 			flash('Check your email for password reset instructions.', 'info')
-			return redirect(url_for('main.index'))
+			return redirect(url_for('main.home'))
 		else:
 			flash('Email not found', 'danger')
 			return redirect(url_for('main.password_reset'))
@@ -164,13 +164,22 @@ def password_reset_token(token):
 		return redirect(url_for('main.password_reset'))
 
 	if request.method == 'POST':
-		new_password = request.form['password']
+		new_password = request.form['password_1']
+		conferm_password = request.form['password_2']
+
+		if not new_password or not conferm_password:
+			flash('Please enter both password', 'danger')
+			return redirect(url_for('main.password_reset_token', token=token))
+
+		if new_password != conferm_password:
+			flash('Passwords do not match', 'danger')
+			return redirect(url_for('main.password_reset_token', token=token))
 		user = User.query.filter_by(email=email).first()
 		if user:
 			user.set_password(new_password)
 			flash('Your password has been updated.', 'success')
 			return redirect(url_for('main.login'))
-	return render_template('password/password_reset_phase2.html', title='Reset Password')
+	return render_template('password/password_reset_phase2.html', title='Reset Password', token=token)
 
 @main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required

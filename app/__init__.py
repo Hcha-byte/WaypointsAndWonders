@@ -16,12 +16,14 @@ def create_app():
     
     # Configure Flask-Mail with your email provider
     # TODO configur for WPAW email
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Change for your provider
-    app.config['MAIL_PORT'] = 587
-    app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = 'harveychaney@gmail.com'  # Replace with your email
-    app.config['MAIL_PASSWORD'] = 'wgcf zsic szsu bwmf'  # Use an App Password if using Gmail
-    app.config['MAIL_DEFAULT_SENDER'] = 'harveychaney@gmail.com'
+    app.config['MAIL_SERVER'] = 'mail.privateemail.com'  # Change for your provider
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_DEBUG'] = True
+    app.config['MAIL_USERNAME'] = 'contact@waypointsandwonders.com'  # Replace with your email
+    app.config['MAIL_PASSWORD'] = 'ropfy6-sapmyq-bujJer'  # Use an App Password if using Gmail
+    app.config['MAIL_DEFAULT_SENDER'] = 'contact@waypointsandwonders.com'
     
 
     
