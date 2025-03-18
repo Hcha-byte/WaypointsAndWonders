@@ -17,6 +17,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 @login_required
 def home():
+	flash("This is under development", "warning")
 
 	posts = Post.query.all()
 
@@ -86,6 +87,7 @@ def login():
 
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
+	flash("This is under development", "warning")
 	if request.method == 'POST':
 		username = request.form['username']
 		email = request.form['email']
