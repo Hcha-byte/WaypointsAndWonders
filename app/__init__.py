@@ -43,8 +43,9 @@ def create_app():
     
 
     # Import and initialize extensions
-    from .extensions import mail
+    from .extensions import mail, oauth
     mail.init_app(app)
+    oauth.init_app(app)
 
     # Register Blueprints (for routes)
     from app.routes import main
