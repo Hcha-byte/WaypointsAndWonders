@@ -87,7 +87,7 @@ def login():
 
 @main.route('/login/google')
 def login_google():
-	redirect_uri = url_for('authorize_google', _external=True)
+	redirect_uri = url_for('main.authorize_google', _external=True)
 	return google.authorize_redirect(redirect_uri)
 
 @main.route('/authorize/google')
