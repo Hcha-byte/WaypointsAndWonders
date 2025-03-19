@@ -5,7 +5,7 @@ from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 import cloudinary.uploader
 from app import db
-from .extensions import mail
+from .extensions import mail, google
 from app.models import Post, User
 
 s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
@@ -84,6 +84,35 @@ def login():
 			else:
 				return redirect(url_for('main.home'))
 	return render_template('login.html', title= 'Login')
+
+@main.route('/login/google')
+def login_google():
+	redirect_uri = url_for('authorize_google', _external=True)
+	return google.authorize_redirect(redirect_uri)
+
+@main.route('/authorize/google')
+def authorize_google():
+	token = google.authorize_access_token()
+	user_info = google.get('userinfo').json()
+
+	# Check if user exists in DB
+	user = User.query.filter_by(id=user_info['id']).first()
+
+	if not user:
+		# If user does not exist, create a new one
+		user = User()
+		user.id = user_info['id'],
+		user.name = user_info['name'],
+		user.email = user_info['email'],
+		user.profile_pic = user_info.get('picture', '')
+		
+		db.session.add(user)
+		db.session.commit()
+
+	# Log in the user
+	login_user(user)
+
+	return redirect(url_for('dashboard'))
 
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -215,7 +244,7 @@ def delete_post(post_id):
 @main.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def profile(user_id):
 	return render_template('error.html', title='Profile', functionality='Profile',
-	                       message='This feature has not been implemented yet, please contact an admin if you need this feature')
+						   message='This feature has not been implemented yet, please contact an admin if you need this feature')
 	if current_user.is_anonymous or current_user.id != user_id:
 		return render_template('error.html', title='Profile', functionality='Profile', message='You do not have access to this page')
 	user = User.query.get_or_404(user_id)

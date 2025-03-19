@@ -24,6 +24,8 @@ def create_app():
     app.config['MAIL_USERNAME'] = 'contact@waypointsandwonders.com'  # Replace with your email
     app.config['MAIL_PASSWORD'] = 'ropfy6-sapmyq-bujJer'  # Use an App Password if using Gmail
     app.config['MAIL_DEFAULT_SENDER'] = 'contact@waypointsandwonders.com'
+    app.config['GOOGLE_CLIENT_ID'] = '735507344079-1u1080giul9513s8sdhub5dam9vuuu4d.apps.googleusercontent.com'
+    app.config['GOOGLE_CLIENT_SECRET'] = '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'
     
 
     

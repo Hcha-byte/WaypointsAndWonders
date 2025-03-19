@@ -20,7 +20,17 @@
     <button type="submit" class="button">Login</button>
     <br>
     <br>
-    <button type="button" class="button"><a href="{{ url_for('main.signup') }}">Sign Up</a></button>
-    <button type="button" class="button"><a href="{{ url_for('main.password_reset') }}">Forgot Password?</a></button>
+    <button type="button" class="button">
+	    <a href="{{ url_for('main.signup') }}">Sign Up</a>
+    </button>
+    <button type="button" class="button">
+	    <a href="{{ url_for('main.password_reset') }}">Forgot Password?</a>
+    </button>
+	<button type="button" class="button">
+		<a href="{{ url_for('login_google') }}" class="btn btn-primary">
+	        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" width="20px">
+	        Login with Google
+		</a>
+	</button>
 </form>
 {% endblock %}
