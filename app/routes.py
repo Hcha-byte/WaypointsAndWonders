@@ -110,7 +110,7 @@ def authorize_google():
 		db.session.commit()
 
 	# Log in the user
-	login_user(user)
+	login_user(user, remember=True)
 
 	return redirect(url_for('dashboard'))
 

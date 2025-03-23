@@ -18,7 +18,17 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_url = db.Column(db.String, nullable=False, default='https://res.cloudinary.com/dao2ekwrd/image/upload/v1741910294/WPAW/z9hnukyaz0f0i7osnamz.jpg')
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    password_hash = db.Column(db.String, nullable=False)
+    is_oauth = db.Column(db.Boolean, default=False, nullable=False)
+    password_hash = db.Column(db.String, nullable=True)
+    
+    # @validates("password_hash")
+    # def validate_password(self, key, value):
+    #     # If the user signed up via OAuth, allow password to be NULL
+    #     if self.is_oauth:
+    #         return value  # NULL is fine
+    #     if not value:
+    #         raise ValueError("Error: 403 - Password cannot be empty for non-OAuth users")
+    #     return value  # Otherwise, return the password
     
     def make_admin(self):
         self.is_admin = True
