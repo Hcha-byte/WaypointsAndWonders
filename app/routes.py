@@ -102,9 +102,9 @@ def authorize_google():
 		# If user does not exist, create a new one
 		user = User()
 		user.id = user_info['id'],
-		user.name = user_info['name'],
+		user.username = user_info['given_name'],
 		user.email = user_info['email'],
-		user.profile_pic = user_info.get('picture', '')
+		user.image_url = user_info.get('picture')
 		
 		db.session.add(user)
 		db.session.commit()
