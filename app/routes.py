@@ -105,14 +105,14 @@ def authorize_google():
 		user.username = user_info['given_name'],
 		user.email = user_info['email'],
 		user.image_url = user_info.get('picture')
-		
+		user.is_oauth = True
 		db.session.add(user)
 		db.session.commit()
 
 	# Log in the user
 	login_user(user, remember=True)
 
-	return redirect(url_for('dashboard'))
+	return redirect(url_for('main.profile', user_id=user.id))
 
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
