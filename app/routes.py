@@ -14,7 +14,6 @@ main = Blueprint('main', __name__)
 
 
 @main.route('/index')
-@main.route('/')
 @login_required
 def home():
 	flash("This is under development", "warning")
@@ -22,6 +21,11 @@ def home():
 	posts = Post.query.all()
 
 	return render_template('index.html', title='Home', posts=posts)
+
+@main.route('/')
+def welcome():
+	# TODO: Add welcome page
+	return redirect(url_for('main.home'))
 
 @main.route('/post/<int:post_id>')
 def post(post_id):

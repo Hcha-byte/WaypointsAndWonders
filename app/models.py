@@ -56,4 +56,4 @@ class User(db.Model, UserMixin):
     
     @staticmethod
     def user_loder(user_id):
-        return User.query.get(int(user_id))
+        return User.query.get(user_id)
