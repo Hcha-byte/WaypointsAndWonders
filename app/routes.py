@@ -5,6 +5,7 @@ from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 import cloudinary.uploader
 from app import db
+from .decoraters import admin_required
 from .extensions import mail, google
 from app.models import Post, User
 
@@ -87,6 +88,8 @@ def login():
 				return redirect(next_url)
 			else:
 				return redirect(url_for('main.home'))
+		else:
+			flash('Invalid username or password', 'danger')
 	return render_template('login.html', title= 'Login')
 
 @main.route('/login/google')
@@ -219,7 +222,7 @@ def password_reset_token(token):
 	return render_template('password/password_reset_phase2.html', title='Reset Password', token=token)
 
 @main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def edit_post(post_id):
 	post = Post.query.get_or_404(post_id)
 	if post.user_id != current_user.id:
@@ -233,7 +236,7 @@ def edit_post(post_id):
 
 
 @main.route('/delete/<int:post_id>', methods=['POST', 'GET'])
-@login_required
+@admin_required
 def delete_post(post_id):
 	post = Post.query.get_or_404(post_id)
 	if post.user_id != current_user.id:
