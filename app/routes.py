@@ -18,30 +18,33 @@ main = Blueprint('main', __name__)
 @login_required
 def home():
 	flash("This is under development", "warning")
-
+	
 	posts = Post.query.all()
-
+	
 	return render_template('index.html', title='Home', posts=posts)
+
 
 @main.route('/')
 def welcome():
 	# TODO: Add welcome page
 	return redirect(url_for('main.home'))
 
+
 @main.route('/post/<int:post_id>')
 def post(post_id):
 	post = Post.query.get_or_404(post_id)
 	return render_template('post.html', title=post.title, post=post)
 
+
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_post():
 	if request.method == 'POST':
-
+		
 		title = request.form['title']
 		content = request.form['content']
 		image = request.files['image']
-
+		
 		if not title or not content:
 			flash('Please enter both title and content', 'danger')
 		else:
@@ -79,7 +82,7 @@ def login():
 		if not username or not password:
 			flash('Please enter both username and password', 'danger')
 			return redirect(url_for('main.login'))
-
+		
 		user = User.query.filter_by(username=username).first()
 		if user and user.check_password(password):
 			login_user(user, remember=remember_me)
@@ -90,21 +93,23 @@ def login():
 				return redirect(url_for('main.home'))
 		else:
 			flash('Invalid username or password', 'danger')
-	return render_template('login.html', title= 'Login')
+	return render_template('login.html', title='Login')
+
 
 @main.route('/login/google')
 def login_google():
 	redirect_uri = url_for('main.authorize_google', _external=True)
 	return google.authorize_redirect(redirect_uri)
 
+
 @main.route('/authorize/google')
 def authorize_google():
 	token = google.authorize_access_token()
 	user_info = google.get('userinfo').json()
-
+	
 	# Check if user exists in DB
 	user = User.query.filter_by(id=user_info['id']).first()
-
+	
 	if not user:
 		# If user does not exist, create a new one
 		user = User()
@@ -115,11 +120,12 @@ def authorize_google():
 		user.is_oauth = True
 		db.session.add(user)
 		db.session.commit()
-
+	
 	# Log in the user
 	login_user(user, remember=True)
-
+	
 	return redirect(url_for('main.profile', user_id=user.id))
+
 
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -129,11 +135,11 @@ def signup():
 		email = request.form['email']
 		password = request.form['password']
 		confirm_password = request.form['confirm_password']
-
+		
 		if not username or not email or not password or not confirm_password:
 			flash('Please enter all fields', 'danger')
 			return redirect(url_for('main.signup'))
-
+		
 		if password != confirm_password:
 			flash('Passwords do not match', 'danger')
 			return redirect(url_for('main.signup'))
@@ -166,32 +172,32 @@ def password_reset():
 		email = request.form['email']
 		if not email:
 			flash('Please enter your email', 'danger')
-			return  redirect(url_for('main.password_reset'))
+			return redirect(url_for('main.password_reset'))
 		
 		user = User.query.filter_by(email=email).first()
 		if user:
-
+			
 			# Generate a secure token
 			token = s.dumps(email, salt='password-reset-salt')
-	
+			
 			# Create reset link
 			reset_url = url_for('main.password_reset_token', token=token, _external=True)
-	
+			
 			# Send the email
 			msg = Message('Password Reset Request - WayPointsAndWonders',
-							  recipients=[email])
+			              recipients=[email])
 			msg.body = render_template('email/password_email.txt', reset_url=reset_url)
 			
 			msg.html = render_template('email/password_email.html', reset_url=reset_url)
 			
 			mail.send(msg)
-	
+			
 			flash('Check your email for password reset instructions.', 'info')
 			return redirect(url_for('main.home'))
 		else:
 			flash('Email not found', 'danger')
 			return redirect(url_for('main.password_reset'))
-
+	
 	return render_template('password/password_reset.html', title='Password Reset')
 
 
@@ -202,15 +208,15 @@ def password_reset_token(token):
 	except:
 		flash('Invalid or expired token.', 'danger')
 		return redirect(url_for('main.password_reset'))
-
+	
 	if request.method == 'POST':
 		new_password = request.form['password_1']
 		conferm_password = request.form['password_2']
-
+		
 		if not new_password or not conferm_password:
 			flash('Please enter both password', 'danger')
 			return redirect(url_for('main.password_reset_token', token=token))
-
+		
 		if new_password != conferm_password:
 			flash('Passwords do not match', 'danger')
 			return redirect(url_for('main.password_reset_token', token=token))
@@ -220,6 +226,7 @@ def password_reset_token(token):
 			flash('Your password has been updated.', 'success')
 			return redirect(url_for('main.login'))
 	return render_template('password/password_reset_phase2.html', title='Reset Password', token=token)
+
 
 @main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @admin_required
@@ -251,9 +258,10 @@ def delete_post(post_id):
 @main.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def profile(user_id):
 	return render_template('error.html', title='Profile', functionality='Profile',
-						   message='This feature has not been implemented yet, please contact an admin if you need this feature')
+	                       message='This feature has not been implemented yet, please contact an admin if you need this feature')
 	if current_user.is_anonymous or current_user.id != user_id:
-		return render_template('error.html', title='Profile', functionality='Profile', message='You do not have access to this page')
+		return render_template('error.html', title='Profile', functionality='Profile',
+		                       message='You do not have access to this page')
 	user = User.query.get_or_404(user_id)
 	# TODO: Add profile page (profile.html, takes user= User())
 	return render_template('profile.html', title='Profile', user=user)
