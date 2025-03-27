@@ -73,6 +73,37 @@ body {
 }
 /* Content Styles */
 
+.oauth_google img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.oauth_google img:hover {
+  border: 2px solid #404040;
+}
+
+.oauth_google {
+  position: relative;
+}
+
+.oauth_google .google-login-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.oauth_google img:hover + .google-login-text {
+  opacity: 1;
+}
+
+
+
 .content {
   padding: 20px;
   margin: 20px;

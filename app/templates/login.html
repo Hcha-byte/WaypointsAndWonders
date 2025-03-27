@@ -26,11 +26,15 @@
     <button type="button" class="button">
 	    <a href="{{ url_for('main.password_reset') }}">Forgot Password?</a>
     </button>
-	<button type="button" class="button">
-		<a href="{{ url_for('main.login_google') }}" class="btn btn-primary">
-	        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" width="20px">
-	        Login with Google
-		</a>
+	<br>
+	<br>
+	<div class="oauth_google">
+	<button type="button" class="button" style="padding: 5px 10px">
+			<a href="{{ url_for('main.login_google') }}">
+		        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" width="20px">
+			<span class="google-login-text">Google Login</span>
+			</a>
 	</button>
+	</div>
 </form>
 {% endblock %}
