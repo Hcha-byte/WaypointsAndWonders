@@ -1,5 +1,6 @@
+import datetime
 import os
-from flask import Blueprint, render_template, request, flash, redirect, url_for, abort
+from flask import Blueprint, render_template, request, flash, redirect, url_for, abort, Response
 from flask_login import login_required, login_user, logout_user, current_user
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
@@ -185,7 +186,7 @@ def password_reset():
 			
 			# Send the email
 			msg = Message('Password Reset Request - WayPointsAndWonders',
-			              recipients=[email])
+						  recipients=[email])
 			msg.body = render_template('email/password_email.txt', reset_url=reset_url)
 			
 			msg.html = render_template('email/password_email.html', reset_url=reset_url)
@@ -258,10 +259,48 @@ def delete_post(post_id):
 @main.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def profile(user_id):
 	return render_template('error.html', title='Profile', functionality='Profile',
-	                       message='This feature has not been implemented yet, please contact an admin if you need this feature')
+						   message='This feature has not been implemented yet, please contact an admin if you need this feature')
 	if current_user.is_anonymous or current_user.id != user_id:
 		return render_template('error.html', title='Profile', functionality='Profile',
-		                       message='You do not have access to this page')
+							   message='You do not have access to this page')
 	user = User.query.get_or_404(user_id)
 	# TODO: Add profile page (profile.html, takes user= User())
 	return render_template('profile.html', title='Profile', user=user)
+
+@main.route('/sitemap.xml')
+def sitemap():
+	"""Generate an XML sitemap dynamically from the database."""
+	base_url = "https://waypointsandwonders.com"
+	lastmod = datetime.datetime.now().strftime("%Y-%m-%d")
+
+	urls = [
+		{"loc": f"{base_url}/", "lastmod": lastmod, "priority": "0.8"},
+		{"loc": f"{base_url}/index", "lastmod": lastmod, "priority": "1.0"},
+		{"loc": f"{base_url}/post", "lastmod": lastmod, "priority": "0.5"},
+		{"loc": f"{base_url}/password", "lastmod": lastmod, "priority": "0.5"},
+		{"loc": f"{base_url}/signup", "lastmod": lastmod, "priority": "0.5"},
+		{"loc": f"{base_url}/login", "lastmod": lastmod, "priority": "0.8"},
+		{"loc": f"{base_url}/add", "lastmod": lastmod, "priority": "0.7"},
+	]
+
+	# Fetch all published blog posts
+	posts = Post.query.all()
+
+	for post in posts:
+		urls.append({
+			"loc": f"{base_url}/post/{post.id}",
+			"lastmod": post.date_posted.strftime("%Y-%m-%d")
+		})
+
+	sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+	<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+		{''.join(f'<url>'
+		             f'<loc>{url["loc"]}</loc>'
+		             f'<lastmod>{url["lastmod"]}</lastmod>'
+		             f'<changefreq>weekly</changefreq>'
+		             f'<priority>{url["priority"]}</priority>'
+	             f'</url>' for url in urls)}
+	</urlset>
+	"""
+
+	return Response(sitemap_xml, mimetype="application/xml")
