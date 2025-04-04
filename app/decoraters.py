@@ -1,6 +1,6 @@
 from flask_login import current_user, login_required
 from functools import wraps
-from flask import flash, redirect, url_for, request, render_template_string
+from flask import flash, redirect, url_for, request
 
 
 def is_bot():
@@ -31,5 +31,5 @@ def login_bot(f):
 			return f(*args, **kwargs)
 		else:
 			# Preserve the original requested URL in 'next' parameter
-			return redirect(url_for("login", next=request.path))
+			return redirect(url_for("main.login", next=request.path))
 	return decorated_function

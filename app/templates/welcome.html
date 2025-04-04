@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="content">Welcome to WayPointsAndWonders</h1>
+<div class="content">
+	<br>
+	<b><button type="button" class="button"><a href="{{ url_for('main.home') }}">Posts</a></button></b>
+	<button type="button" class="button"><a href="{{ url_for('main.signup') }}">Sign Up</a></button>
+	<button type="button" class="button"><a href="{{ url_for('main.login') }}">Login</a></button>
+</div>
+
+{% endblock %}

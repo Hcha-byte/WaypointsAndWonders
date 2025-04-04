@@ -33,7 +33,7 @@ def welcome():
 	# TODO: Add welcome page
 
 	if not is_bot():
-		return redirect(url_for('main.home'))
+		return render_template('welcome.html', title='Welcome')
 	else:
 		return render_template_string("""
 			<h1>Welcome to WayPointsAndWonders!</h1>
