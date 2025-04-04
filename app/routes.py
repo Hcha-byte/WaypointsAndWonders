@@ -1,12 +1,12 @@
 import datetime
 import os
-from flask import Blueprint, render_template, request, flash, redirect, url_for, abort, Response
+from flask import Blueprint, render_template, request, flash, redirect, url_for, abort, Response, render_template_string
 from flask_login import login_required, login_user, logout_user, current_user
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 import cloudinary.uploader
 from app import db
-from .decoraters import admin_required
+from .decoraters import admin_required, login_bot, is_bot
 from .extensions import mail, google
 from app.models import Post, User
 
@@ -15,20 +15,29 @@ s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
 main = Blueprint('main', __name__)
 
 
+
 @main.route('/index')
-@login_required
+@login_bot
 def home():
-	flash("This is under development", "warning")
-	
-	posts = Post.query.all()
-	
-	return render_template('index.html', title='Home', posts=posts)
+
+	if not is_bot():
+		posts = Post.query.all()
+		
+		return render_template('index.html', title='Home', posts=posts)
+	else:
+		return render_template('index.html', title='Home', posts=None)
 
 
 @main.route('/')
 def welcome():
 	# TODO: Add welcome page
-	return redirect(url_for('main.home'))
+
+	if not is_bot():
+		return redirect(url_for('main.home'))
+	else:
+		return render_template_string("""
+			<h1>Welcome to WayPointsAndWonders!</h1>
+            """)
 
 
 @main.route('/post/<int:post_id>')
@@ -296,11 +305,11 @@ def sitemap():
 	sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 	<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 		{''.join(f'<url>'
-		             f'<loc>{url["loc"]}</loc>'
-		             f'<lastmod>{url["lastmod"]}</lastmod>'
-		             f'<changefreq>weekly</changefreq>'
-		             f'<priority>{url["priority"]}</priority>'
-	             f'</url>' for url in urls)}
+					 f'<loc>{url["loc"]}</loc>'
+					 f'<lastmod>{url["lastmod"]}</lastmod>'
+					 f'<changefreq>weekly</changefreq>'
+					 f'<priority>{url["priority"]}</priority>'
+				 f'</url>' for url in urls)}
 	</urlset>
 	"""
 

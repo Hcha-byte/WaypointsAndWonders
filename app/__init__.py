@@ -15,7 +15,6 @@ def create_app():
     app.config.from_object('config.Config')
     
     # Configure Flask-Mail with your email provider
-    # TODO configur for WPAW email
     app.config['MAIL_SERVER'] = 'mail.privateemail.com'  # Change for your provider
     app.config['MAIL_PORT'] = 465
     app.config['MAIL_USE_TLS'] = False
