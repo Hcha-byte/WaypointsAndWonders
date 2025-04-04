@@ -289,7 +289,8 @@ def sitemap():
 	for post in posts:
 		urls.append({
 			"loc": f"{base_url}/post/{post.id}",
-			"lastmod": post.date_posted.strftime("%Y-%m-%d")
+			"lastmod": post.date_posted.strftime("%Y-%m-%d"),
+			"priority": "0.5"
 		})
 
 	sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
