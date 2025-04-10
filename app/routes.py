@@ -14,7 +14,7 @@ s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
 
 main = Blueprint('main', __name__)
 
-
+# <editor-fold desc="index/main functions">
 
 @main.route('/index')
 @login_bot
@@ -30,15 +30,16 @@ def home():
 
 @main.route('/')
 def welcome():
-	# TODO: Add welcome page
 
 	if not is_bot():
 		return render_template('welcome.html', title='Welcome')
 	else:
 		return render_template_string("""
 			<h1>Welcome to WayPointsAndWonders!</h1>
-            """)
+			""")
+# </editor-fold>
 
+# <editor-fold desc="posts">
 
 @main.route('/post/<int:post_id>')
 def post(post_id):
@@ -77,6 +78,33 @@ def add_post():
 	
 	return render_template('add_post.html', title='Add Post')
 
+@main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_post(post_id):
+	post = Post.query.get_or_404(post_id)
+	if post.user_id != current_user.id:
+		abort(403)
+	if request.method == 'POST':
+		post.title = request.form['title']
+		post.content = request.form['content']
+		db.session.commit()
+		return redirect(url_for('main.post', post_id=post.id))
+	return render_template('edit_post.html', title='Edit Post', post=post)
+
+
+@main.route('/delete/<int:post_id>', methods=['POST', 'GET'])
+@admin_required
+def delete_post(post_id):
+	post = Post.query.get_or_404(post_id)
+	if post.user_id != current_user.id:
+		abort(403)
+	db.session.delete(post)
+	db.session.commit()
+	flash('Your post has been deleted!', 'success')
+	return redirect(url_for('main.home'))
+# </editor-fold>
+
+# <editor-fold desc="auth">
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
@@ -140,6 +168,10 @@ def authorize_google():
 @main.route('/signup', methods=['GET', 'POST'])
 def signup():
 	flash("This is under development", "warning")
+	if current_user.is_authenticated:
+		flash('You are already logged in', 'info')
+		return redirect(url_for('main.home'))
+	
 	if request.method == 'POST':
 		username = request.form['username']
 		email = request.form['email']
@@ -160,11 +192,13 @@ def signup():
 			user.set_password(password)
 			db.session.add(user)
 			db.session.commit()
-		except:
+		except Exception:
 			db.session.rollback()
 			flash('Email already registered. Please log in or chose another email', 'danger')
 			return redirect(url_for('main.login'))
-		return redirect(url_for('main.login'))
+		current_user.login_user(user)
+		flash('Your account has been created!', 'success')
+		return redirect(url_for('main.home'))
 	return render_template('signup.html', title='Sign Up')
 
 
@@ -175,7 +209,6 @@ def logout():
 	return redirect(url_for('main.home'))
 
 
-# noinspection PyUnreachableCode
 @main.route('/password', methods=['GET', 'POST'])
 def password_reset():
 	if request.method == 'POST':
@@ -238,43 +271,19 @@ def password_reset_token(token):
 	return render_template('password/password_reset_phase2.html', title='Reset Password', token=token)
 
 
-@main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
-@admin_required
-def edit_post(post_id):
-	post = Post.query.get_or_404(post_id)
-	if post.user_id != current_user.id:
-		abort(403)
-	if request.method == 'POST':
-		post.title = request.form['title']
-		post.content = request.form['content']
-		db.session.commit()
-		return redirect(url_for('main.post', post_id=post.id))
-	return render_template('edit_post.html', title='Edit Post', post=post)
 
-
-@main.route('/delete/<int:post_id>', methods=['POST', 'GET'])
-@admin_required
-def delete_post(post_id):
-	post = Post.query.get_or_404(post_id)
-	if post.user_id != current_user.id:
-		abort(403)
-	db.session.delete(post)
-	db.session.commit()
-	flash('Your post has been deleted!', 'success')
-	return redirect(url_for('main.home'))
-
-
-# noinspection PyUnreachableCode
+@login_required
 @main.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def profile(user_id):
-	return render_template('error.html', title='Profile', functionality='Profile',
-						   message='This feature has not been implemented yet, please contact an admin if you need this feature')
-	if current_user.is_anonymous or current_user.id != user_id:
+	if current_user.is_anonymous or str(current_user.id) != str(user_id):
 		return render_template('error.html', title='Profile', functionality='Profile',
 							   message='You do not have access to this page')
-	user = User.query.get_or_404(user_id)
+	user = User.query.get_or_404(str(user_id))
 	# TODO: Add profile page (profile.html, takes user= User())
 	return render_template('profile.html', title='Profile', user=user)
+# </editor-fold>
+
+# <editor-fold desc="Utility functions">
 
 @main.route('/sitemap.xml')
 def sitemap():
@@ -314,3 +323,4 @@ def sitemap():
 	"""
 
 	return Response(sitemap_xml, mimetype="application/xml")
+# </editor-fold>

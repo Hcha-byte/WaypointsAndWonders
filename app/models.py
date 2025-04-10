@@ -10,25 +10,23 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, default=db.func.now())
     user_id = db.Column(db.String(255), db.ForeignKey('user.id'), nullable=False)
     image_url = db.Column(db.String, nullable=True)
+    
+def generate_next_user_id():
+    last_user = User.query.filter_by(is_oauth=False).order_by(db.cast(User.id, db.Integer).desc()).first()
 
+    if last_user and last_user.id.isdigit():
+        return str(int(last_user.id) + 1)
+    return "1"
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.String(255), primary_key=True, default=generate_next_user_id)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_url = db.Column(db.String, nullable=False, default='https://res.cloudinary.com/dao2ekwrd/image/upload/v1741910294/WPAW/z9hnukyaz0f0i7osnamz.jpg')
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     is_oauth = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String, nullable=True)
-    
-    # @validates("password_hash")
-    # def validate_password(self, key, value):
-    #     # If the user signed up via OAuth, allow password to be NULL
-    #     if self.is_oauth:
-    #         return value  # NULL is fine
-    #     if not value:
-    #         raise ValueError("Error: 403 - Password cannot be empty for non-OAuth users")
-    #     return value  # Otherwise, return the password
+
     
     def make_admin(self):
         self.is_admin = True

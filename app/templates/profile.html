@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="content">Profile</h1>
+
+<div class="content">
+	<p>Username: {{ user.username }}</p>
+	<p>Email: {{ user.email }}</p>
+	<p>Image URL: {{ user.image_url }}</p>
+</div>
+{% endblock %}
