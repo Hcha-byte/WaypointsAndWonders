@@ -12,8 +12,8 @@
 		</div>
 	{% endif %}
 	{% if post.user_id == current_user.id or current_user.is_admin %}
-			<button type="button" class="button"><a href="{{ url_for('main.edit_post', post_id=post.id) }}">Edit</a></button>
-			<button type="button" class="button"><a href="{{ url_for('main.delete_post', post_id=post.id) }}">Delete</a></button>
+			<button type="button" class="button"><a href="{{ url_for('admin.edit_post', post_id=post.id) }}">Edit</a></button>
+			<button type="button" class="button"><a href="{{ url_for('admin.delete_post', post_id=post.id) }}">Delete</a></button>
 	{% endif %}
 
 </div>

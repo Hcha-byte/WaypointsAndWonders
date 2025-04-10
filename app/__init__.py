@@ -49,10 +49,18 @@ def create_app():
     from .extensions import mail, oauth
     mail.init_app(app)
     oauth.init_app(app)
+    
+    # Import each blueprint
+    from app.main import main_bp
+    from app.posts import posts_bp
+    from app.admin import admin_bp
+    from app.auth import auth_bp
 
     # Register Blueprints (for routes)
-    from app.routes import main
-    app.register_blueprint(main)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(posts_bp, url_prefix='/post')            # posts at /post/<id>
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
     return app
     # </editor-fold>

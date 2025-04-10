@@ -4,7 +4,7 @@
 {% block content %}
 <h1 class="content">Login</h1>
 
-<form action="{{ url_for('main.login') }}" method="POST" class="form">
+<form action="{{ url_for('auth.login') }}" method="POST" class="form">
     <div>
         <label for="username">Username</label>
         <input type="text" id="username" name="username">
@@ -21,16 +21,16 @@
     <br>
     <br>
     <button type="button" class="button">
-	    <a href="{{ url_for('main.signup') }}">Sign Up</a>
+	    <a href="{{ url_for('auth.signup') }}">Sign Up</a>
     </button>
     <button type="button" class="button">
-	    <a href="{{ url_for('main.password_reset') }}">Forgot Password?</a>
+	    <a href="{{ url_for('auth.password_reset') }}">Forgot Password?</a>
     </button>
 	<br>
 	<br>
 	<div class="oauth_google">
 		<button type="button" class="button" style="padding: 5px 10px">
-				<a href="{{ url_for('main.login_google') }}">
+				<a href="{{ url_for('auth.login_google') }}">
 			        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" width="20px">
 					<span style="color: black" class="google-login-text">Google Login</span>
 				</a>

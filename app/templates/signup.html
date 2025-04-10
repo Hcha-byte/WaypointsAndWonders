@@ -4,7 +4,7 @@
 {% block content %}
 <h1 class="content">Sign Up</h1>
 
-<form action="{{ url_for('main.signup') }}" method="POST" class="form">
+<form action="{{ url_for('auth.signup') }}" method="POST" class="form">
     <div>
         <label for="username">Username</label>
         <input type="text" id="username" name="username">

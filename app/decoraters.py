@@ -31,5 +31,5 @@ def login_bot(f):
 			return f(*args, **kwargs)
 		else:
 			# Preserve the original requested URL in 'next' parameter
-			return redirect(url_for("main.login", next=request.path))
+			return redirect(url_for("auth.login", next=request.path))
 	return decorated_function
