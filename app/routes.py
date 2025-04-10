@@ -46,8 +46,16 @@ def post(post_id):
 	post = Post.query.get_or_404(post_id)
 	return render_template('post.html', title=post.title, post=post)
 
+# </editor-fold>
 
-@main.route('/add', methods=['GET', 'POST'])
+# <editor-fold desc="admin">
+
+@main.route('/admin')
+@admin_required
+def admin():
+	return render_template('admin.html', title='Admin')
+
+@main.route('/admin/add', methods=['GET', 'POST'])
 @login_required
 def add_post():
 	if request.method == 'POST':
@@ -78,7 +86,7 @@ def add_post():
 	
 	return render_template('add_post.html', title='Add Post')
 
-@main.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+@main.route('/admin/edit/<int:post_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_post(post_id):
 	post = Post.query.get_or_404(post_id)
@@ -92,7 +100,7 @@ def edit_post(post_id):
 	return render_template('edit_post.html', title='Edit Post', post=post)
 
 
-@main.route('/delete/<int:post_id>', methods=['POST', 'GET'])
+@main.route('/admin/delete/<int:post_id>', methods=['POST', 'GET'])
 @admin_required
 def delete_post(post_id):
 	post = Post.query.get_or_404(post_id)
@@ -102,6 +110,7 @@ def delete_post(post_id):
 	db.session.commit()
 	flash('Your post has been deleted!', 'success')
 	return redirect(url_for('main.home'))
+
 # </editor-fold>
 
 # <editor-fold desc="auth">
