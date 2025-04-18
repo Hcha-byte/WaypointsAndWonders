@@ -171,8 +171,8 @@ def password_reset_token(token):
 @auth_bp.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 @login_required
 def profile(user_id):
-	if current_user.id != user_id:
+	if current_user.id != str(user_id):
 		return render_template('error.html', title='Profile', functionality='Profile',
 		                       message='You do not have access to this page')
-	user = User.query.get_or_404(user_id)
+	user = User.query.get_or_404(str(user_id))
 	return render_template('profile.html', title='Profile', user=user)
