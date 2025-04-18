@@ -1,10 +1,12 @@
 import os
 
 from flask import render_template, request, redirect, abort
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app import create_app
 
 app = create_app()
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # <editor-fold desc="Error handlers">
 
@@ -15,7 +17,7 @@ def page_not_found(e):
 
 @app.before_request
 def enforce_https():
-	if os.getenv("IS_DEV") == 'FALSE':
+	if os.getenv("IS_DEV", "TRUE") != "TRUE":
 		if not request.is_secure:
 			url = request.url.replace("http://", "https://", 1)
 			return redirect(url, code=301)
