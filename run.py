@@ -1,4 +1,14 @@
 import os
+import logging
+
+from rich.logging import RichHandler
+
+logging.basicConfig(
+	level="INFO",
+	format="%(message)s",
+	datefmt="[%X]",
+	handlers=[RichHandler(rich_tracebacks=True, markup=True)]
+)
 
 from flask import render_template, request, redirect, abort
 from werkzeug.middleware.proxy_fix import ProxyFix
