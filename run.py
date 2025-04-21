@@ -1,7 +1,4 @@
-import os
-
-
-from flask import render_template, request, redirect, abort
+from flask import render_template,redirect, abort, request
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app import create_app
@@ -18,17 +15,36 @@ def page_not_found(e):
 
 @app.before_request
 def enforce_https():
-	if os.getenv("IS_DEV", "TRUE") != "TRUE":
-		if not request.is_secure:
-			url = request.url.replace("http://", "https://", 1)
-			return redirect(url, code=301)
+	if not request.is_secure:
+		url = request.url.replace("http://", "https://", 1)
+		return redirect(url, code=301)
 
-BLOCKED_PATHS = ["wp-", ".php", "/shell", "/filemanager"]
+BLOCKED_PATHS = [
+    "wp-", ".php", "/shell", "/filemanager",
+    ".env", ".env.", "aws-secret", "sendgrid",
+    ".remote", "laravel.log", "settings.json",
+    "config.js", "server.js", "twilio-chat"
+]
+known_bad_bots = [
+	"curl", "httpclient", "python", "wget", "libwww",
+	"perl", "scrapy", "nmap", "masscan"
+]
 @app.before_request
 def block_suspicious():
+	user_agent = request.headers.get('User-Agent', '').lower()
+	
+	if not user_agent:
+		abort(403)
+		
 	if any(bad in request.path.lower() for bad in BLOCKED_PATHS):
-		abort(411)
-	 
+		abort(403)
+		
+	if user_agent.strip() == "":
+		abort(403)
+		
+	if any(bad in user_agent for bad in known_bad_bots):
+		abort(403)
+		
 # </editor-fold>
 
 if __name__ == '__main__':

@@ -43,7 +43,7 @@ def color_line(line):
     match = re.search(r'\s(\d{3})(?!\d)', line)
     if match:
         status = match.group(1)
-        if status == "411":
+        if status == "403":
             return f"{COLORS['dim']}{original_line}{COLORS['reset']}"
         elif status.startswith("2"):
             color = COLORS['green']
