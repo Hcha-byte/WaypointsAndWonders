@@ -41,7 +41,7 @@ def add_post():
 			
 			return redirect(url_for('main.home'))
 	
-	return render_template('add_post.html', title='Add Post')
+	return render_template('admin/add_post.html', title='Add Post')
 
 
 @admin_bp.route('/edit/<int:post_id>', methods=['GET', 'POST'])
@@ -55,7 +55,7 @@ def edit_post(post_id):
 		post.content = request.form['content']
 		db.session.commit()
 		return redirect(url_for('posts.view_post', post_id=post.id))
-	return render_template('edit_post.html', title='Edit Post', post=post)
+	return render_template('admin/edit_post.html', title='Edit Post', post=post)
 
 
 @admin_bp.route('/delete/<int:post_id>', methods=['POST', 'GET'])

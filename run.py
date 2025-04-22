@@ -1,4 +1,4 @@
-from flask import render_template,redirect, abort, request
+from flask import render_template, redirect, abort, request, url_for
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app import create_app
@@ -45,6 +45,10 @@ def block_suspicious():
 	if any(bad in user_agent for bad in known_bad_bots):
 		abort(403)
 		
+@app.route('/favicon.ico')
+def favicon():
+	return redirect(url_for('static', filename='images/favicon.ico'))
+	
 # </editor-fold>
 
 if __name__ == '__main__':
