@@ -23,6 +23,9 @@
         <nav class="navbar__links">
 			<div class="navbar__links">
 			{% if current_user.is_authenticated %}
+				{% if current_user.is_admin %}
+					<a href="{{ url_for('admin.admin') }}">Admin Panel</a>
+				{% endif %}
 			    <a href="{{ url_for('auth.logout') }}">Logout</a>
 			    <div class="profile">
 			        <a href="{{ url_for('auth.profile', user_id=current_user.id) }}">{{ current_user.username }}</a>

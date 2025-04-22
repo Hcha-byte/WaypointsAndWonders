@@ -11,7 +11,8 @@ from . import admin_bp
 @admin_bp.route('/')
 @admin_required
 def admin():
-	return render_template('admin.html', title='Admin')
+	posts = Post.query.all()
+	return render_template('admin/admin.html', title='Admin', posts=posts)
 
 
 @admin_bp.route('/add', methods=['GET', 'POST'])

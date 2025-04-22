@@ -16,6 +16,8 @@ COLORS = {
     'bold_yellow': "\033[1;93m",  # Bold and Bright Yellow for routes
 }
 
+
+# noinspection RegExpRedundantEscape
 def color_line(line):
     original_line = line
 

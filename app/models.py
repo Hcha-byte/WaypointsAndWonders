@@ -3,8 +3,16 @@ from flask_login import UserMixin
 
 from .database import db
 
+
+def generate_next_post_id():
+    last_post = Post.query.order_by(db.cast(Post.id, db.Integer).desc()).first()
+
+    if last_post and last_post.id.isdigit():
+        return str(int(last_post.id) + 1)
+    return "1"
+
 class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, default=generate_next_post_id)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, default=db.func.now())
