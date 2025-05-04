@@ -1,5 +1,5 @@
 import datetime
-from flask import render_template, Response, render_template_string
+from flask import render_template, Response, render_template_string, url_for
 from app.models import Post
 from ..decoraters import login_bot, is_bot
 
@@ -27,9 +27,8 @@ def sitemap():
     base_url = "https://waypointsandwonders.com"
     lastmod = datetime.datetime.now().strftime("%Y-%m-%d")
     urls = [
-        {"loc": f"{base_url}/", "lastmod": lastmod, "priority": "0.3"},
-        {"loc": f"{base_url}/index", "lastmod": lastmod, "priority": "1.0"},
-        # TODO: Add other pages to the sitemap
+        {"loc": f"{base_url}{url_for('main.welcome')}", "lastmod": lastmod, "priority": "0.7"},
+        {"loc": f"{base_url}{url_for('main.home')}", "lastmod": lastmod, "priority": "1.0"},
     ]
 
     # Fetch all published blog posts
@@ -51,3 +50,24 @@ def sitemap():
     """
 
     return Response(sitemap_xml, mimetype="application/xml")
+
+@main_bp.route('/robots.txt')
+def robots():
+    content = f"""User-agent: *
+    
+Disallow: {url_for('admin.admin')}
+Disallow: {url_for('auth.login')}
+Disallow: {url_for('auth.signup')}
+Disallow: {url_for('auth.logout')}
+Disallow: {url_for('auth.password_reset')}
+Disallow: {url_for('auth.password_reset_token', token='None')}
+Disallow: {url_for('auth.authorize_google')}
+
+Allow: /
+Allow: {url_for('main.welcome')}
+
+
+Sitemap: https://waypointsandwonders.com/sitemap.xml
+"""
+    return Response(content, mimetype='text/plain')
+
