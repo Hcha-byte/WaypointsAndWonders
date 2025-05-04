@@ -21,7 +21,13 @@
         <label for="confirm_password">Confirm Password</label>
         <input type="password" id="confirm_password" name="confirm_password">
     </div>
-    <button type="submit" class="button">Sign Up</button>
+	<!-- reCAPTCHA widget -->
+	<div class="g-recaptcha" data-sitekey="6LeELi0rAAAAAKkQYoemqlO8nG2jlp5XJKGJc4zM"></div>
+	<br>
+	   <button type="submit" class="button">Sign Up</button>
 </form>
+
+<!-- Load reCAPTCHA script -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 {% endblock %}

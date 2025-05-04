@@ -1,4 +1,6 @@
 import os
+
+import requests
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 from itsdangerous import URLSafeTimedSerializer
@@ -71,12 +73,30 @@ def authorize_google():
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-	flash("This is under development", "warning")
 	if current_user.is_authenticated:
 		flash('You are already logged in', 'info')
 		return redirect(url_for('main.home'))
 	
 	if request.method == 'POST':
+
+		# ✅ reCAPTCHA validation
+		recaptcha_response = request.form.get('g-recaptcha-response')
+		if not recaptcha_response:
+			flash('Please complete the reCAPTCHA challenge.', 'danger')
+			return redirect(url_for('auth.signup'))
+						# Verify reCAPTCHA with Google
+		verify_url = 'https://www.google.com/recaptcha/api/siteverify'
+		data = {
+			'secret': "6LeELi0rAAAAAGzlWRuwMylF7CFw9Pr5yl94JNo5",
+			'response': recaptcha_response,
+			'remoteip': request.remote_addr
+		}
+		r = requests.post(verify_url, data=data)
+		result = r.json()
+		if not result.get('success'):
+			flash('reCAPTCHA verification failed. Please try again.', 'danger')
+			return redirect(url_for('auth.signup'))
+		
 		username = request.form['username']
 		email = request.form['email']
 		password = request.form['password']
@@ -100,7 +120,10 @@ def signup():
 			db.session.rollback()
 			flash('Email already registered. Please log in or chose another email', 'danger')
 			return redirect(url_for('auth.login'))
-		current_user.login_user(user)
+		try:
+			current_user.login_user(user)
+		except Exception:
+			pass
 		flash('Your account has been created!', 'success')
 		return redirect(url_for('main.home'))
 	return render_template('signup.html', title='Sign Up')

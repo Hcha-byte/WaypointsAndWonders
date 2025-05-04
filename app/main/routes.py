@@ -27,7 +27,7 @@ def sitemap():
     base_url = "https://waypointsandwonders.com"
     lastmod = datetime.datetime.now().strftime("%Y-%m-%d")
     urls = [
-        {"loc": f"{base_url}/", "lastmod": lastmod, "priority": "0.8"},
+        {"loc": f"{base_url}/", "lastmod": lastmod, "priority": "0.3"},
         {"loc": f"{base_url}/index", "lastmod": lastmod, "priority": "1.0"},
         # TODO: Add other pages to the sitemap
     ]
@@ -38,7 +38,7 @@ def sitemap():
         urls.append({
             "loc": f"{base_url}/post/{post.id}",
             "lastmod": post.date_posted.strftime("%Y-%m-%d"),
-            "priority": "0.5"
+            "priority": "0.1"
         })
 
     sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
