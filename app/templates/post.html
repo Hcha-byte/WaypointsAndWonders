@@ -8,7 +8,9 @@
     <p>{{ post.content }}</p>
 	{% if post.image_url %}
 		<div>
-			<img src="{{ post.image_url }}" style="align: right">
+			<p>{{ post.image_url }}</p>
+			<p>{{ post.get_urls() }}</p>
+<!--			<img src="{{ post.image_url }}" style="align: right">-->
 		</div>
 	{% endif %}
 	{% if post.user_id == current_user.id or current_user.is_admin %}

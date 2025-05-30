@@ -1,5 +1,6 @@
 import datetime
 from flask import render_template, Response, render_template_string, url_for, redirect
+from sqlalchemy import desc
 from app.models import Post
 from ..decoraters import login_bot, is_bot
 
@@ -18,7 +19,11 @@ def welcome():
 @login_bot
 def home():
 	if not is_bot():
-		posts = Post.query.all()
+		
+		posts = Post.query.order_by(desc(Post.date_posted)).all()
+		
+		
+		
 		return render_template('index.html', title='Home', posts=posts)
 	else:
 		return render_template('index.html', title='Home', posts=None)

@@ -22,7 +22,6 @@ def add_post():
 		title = request.form['title']
 		content = request.form['content']
 		image = request.files['image']
-		
 		if not title or not content:
 			flash('Please enter both title and content', 'danger')
 		else:
