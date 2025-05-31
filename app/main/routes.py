@@ -80,6 +80,10 @@ Sitemap: https://waypointsandwonders.com/sitemap.xml
 """
 	return Response(content, mimetype='text/plain')
 
+@main_bp.route('/terms_and_privacy')
+def terms_and_privacy():
+	return render_template('terms_and_privacy/terms_and_privacy.html')
+
 
 @main_bp.route('/favicon.ico')
 def favicon():

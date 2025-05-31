@@ -143,7 +143,7 @@ def password_reset():
 			# Generate a secure token
 			token = s.dumps(email, salt='password-reset-salt')
 			
-			# Create reset link
+			# Create a reset link
 			reset_url = url_for('auth.password_reset_token', token=token, _external=True)
 			
 			# Send the email
