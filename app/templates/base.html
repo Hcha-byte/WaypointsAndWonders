@@ -2,7 +2,7 @@
 
 <html lang="en">
     <head>
-	    <meta name="google-site-verification" content="-LDluCfqO3yPOdYFnqbom5cPOxMeCJmkqRQJ7JHTkY8" />
+	    <meta name="google-site-verification" content="-LDluCfqO3yPOdYFnqbom5cPOxMeCJmkqRQJ7JHTkY8"/>
         {% if title %}
         <title>{{ title }} - WaypointsAndWonders</title>
         {% else %}
@@ -50,5 +50,11 @@
             {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
+	<footer class="footer">
+		<h3>WayPointsAndWonders</h3>
+		<a href="{{ url_for('main.terms_and_privacy', _anchor='terms') }}">Terms of Service</a>
+		<a href="{{ url_for('main.terms_and_privacy', _anchor='privacy') }}">Privacy Policy</a>
+		<p>&copy; 2025 WaypointsAndWonders, all rights reserved</p>
+	</footer>
     </body>
 </html>
