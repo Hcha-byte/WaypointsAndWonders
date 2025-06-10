@@ -16,15 +16,17 @@
         <td><a href="{{ url_for('posts.view_post', post_id=post.id) }}">{{ post.title }}</a></td>
         <td>{{ post.content }}</td>
 
-		<td>
-		    {% if post.image_url and post.image_url|length > 0 %}
-		        {% for url in post.get_urls() %}
-		            <img src="{{ url }}" alt="Post Image" style="max-width: 100px; max-height: 100px; margin: 2px;" loading="lazy">
-		        {% endfor %}
-		    {% else %}
-		        <em>No images</em>
-		    {% endif %}
-		</td>
+	<td>
+	    {% if post.image_url and post.image_url|length > 0 %}
+	        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+	            {% for url in post.get_urls() %}
+	                <img src="{{ url }}" alt="Post Image" style="height: 80px; object-fit: cover; border-radius: 6px;" loading="lazy">
+	            {% endfor %}
+	        </div>
+	    {% else %}
+	        <em>No images</em>
+	    {% endif %}
+	</td>
 
     </tr>
 {% endfor %}

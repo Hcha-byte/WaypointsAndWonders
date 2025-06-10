@@ -11,6 +11,8 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 	    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 
+
+
     </head>
 	<body>
     <header class="navbar" style="padding: 30px">
@@ -52,8 +54,12 @@
         {% block content %}{% endblock %}
 	<footer class="footer">
 		<h3>WayPointsAndWonders</h3>
+		<br>
 		<a href="{{ url_for('main.terms_and_privacy', _anchor='terms') }}">Terms of Service</a>
 		<a href="{{ url_for('main.terms_and_privacy', _anchor='privacy') }}">Privacy Policy</a>
+		<br>
+		<a href="mailto:contact@WaypointsAndWonders.com">Email Us</a>
+		<br>
 		<p>&copy; 2025 WaypointsAndWonders, all rights reserved</p>
 	</footer>
     </body>
