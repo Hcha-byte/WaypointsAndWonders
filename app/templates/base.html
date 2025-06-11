@@ -10,6 +10,10 @@
         {% endif %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 	    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+	        <!-- ✅ Load jQuery first -->
+	    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+			<!-- Lightbox2 CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" rel="stylesheet">
 
 
 
@@ -62,5 +66,8 @@
 		<br>
 		<p>&copy; 2025 WaypointsAndWonders, all rights reserved</p>
 	</footer>
+	<!-- Lightbox2 JS -->
+	<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js"></script>
+
     </body>
 </html>
