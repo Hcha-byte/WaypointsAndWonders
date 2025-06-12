@@ -3,25 +3,28 @@
 
 {% block content %}
 <div class="content">
-    <h1>{{ post.title }}</h1>
+	<h1>{{ post.title }}</h1>
 	<br>
-    <p>{{ post.content }}</p>
+	<p>{{ post.content }}</p>
 	<br>
 
-{% if post.image_url %}
-    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-        {% for url in post.get_urls() %}
-            <a href="{{ url }}" data-lightbox="post-{{ post.id }}" data-title="{{ post.title }}">
-                <img src="{{ url }}" alt="Post Image" style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" loading="lazy">
-            </a>
-        {% endfor %}
-    </div>
-{% endif %}
+	{% if post.image_url %}
+	<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+		{% for url in post.get_urls() %}
+		<a href="{{ url }}" data-lightbox="post-{{ post.id }}" data-title="{{ post.title }}">
+			<img src="{{ url }}" alt="Post Image"
+			     style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);"
+			     loading="lazy">
+		</a>
+		{% endfor %}
+	</div>
+	{% endif %}
 
 
 	{% if post.user_id == current_user.id or current_user.is_admin %}
-			<button type="button" class="button"><a href="{{ url_for('admin.edit_post', post_id=post.id) }}">Edit</a></button>
-			<button type="button" class="button"><a href="{{ url_for('admin.delete_post', post_id=post.id) }}">Delete</a></button>
+	<button type="button" class="button"><a href="{{ url_for('admin.edit_post', post_id=post.id) }}">Edit</a></button>
+	<button type="button" class="button"><a href="{{ url_for('admin.delete_post', post_id=post.id) }}">Delete</a>
+	</button>
 	{% endif %}
 </div>
 {% endblock %}

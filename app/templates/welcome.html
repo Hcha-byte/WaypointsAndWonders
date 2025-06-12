@@ -3,10 +3,13 @@
 
 {% block content %}
 
-<h1 class="content">Welcome to WayPointsAndWonders</h1>
+<div class="content">
+	<h1>Welcome to WayPointsAndWonders</h1>
+	<h3>You will need to log in to get started</h3>
+</div>
+
 <div class="content">
 	<br>
-	<b><button type="button" class="button"><a href="{{ url_for('main.home') }}">Posts/home</a></button></b>
 	<button type="button" class="button"><a href="{{ url_for('auth.signup') }}">Sign Up</a></button>
 	<button type="button" class="button"><a href="{{ url_for('auth.login') }}">Login</a></button>
 </div>

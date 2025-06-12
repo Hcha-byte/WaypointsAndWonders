@@ -1,16 +1,27 @@
 import datetime
-from flask import render_template, Response, render_template_string, url_for, redirect
-from sqlalchemy import desc
-from app.models import Post
-from ..decoraters import login_bot, is_bot
 
+from flask import render_template, Response, render_template_string, url_for, redirect, request
+from flask_login import current_user
+from sqlalchemy import desc
+
+from app.models import Post
 from . import main_bp  # import the blueprint
+from ..decoraters import login_bot, is_bot
 
 
 @main_bp.route('/')
 def welcome():
-	if not is_bot():
+	args = request.args.get('testing')
+	
+	if args == 't':
+		print('Testing logged on welcome')
 		return render_template('welcome.html', title='Welcome')
+	
+	if not is_bot():
+		if current_user.is_authenticated:
+			return redirect(url_for('main.home'))
+		else:
+			return render_template('welcome.html', title='Welcome')
 	else:
 		return render_template_string("<h1>Welcome to WayPointsAndWonders!</h1>")
 
@@ -21,8 +32,6 @@ def home():
 	if not is_bot():
 		
 		posts = Post.query.order_by(desc(Post.date_posted)).all()
-		
-		
 		
 		return render_template('index.html', title='Home', posts=posts)
 	else:
@@ -79,6 +88,7 @@ Allow: {url_for('main.home')}
 Sitemap: https://waypointsandwonders.com/sitemap.xml
 """
 	return Response(content, mimetype='text/plain')
+
 
 @main_bp.route('/terms_and_privacy')
 def terms_and_privacy():
