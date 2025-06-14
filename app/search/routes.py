@@ -13,6 +13,11 @@ MEILI_API_KEY = os.getenv("MEILI_API_KEY")
 
 @search_bp.route('/', methods=['GET', 'POST'])
 def search():
+	q = request.form.get('q', '')
+	if q:
+		posts = Post.search_posts(q)
+		return render_template('search.html', posts=posts, query=q, title='Search')
+	
 	return render_template('search.html', title='Search')
 
 

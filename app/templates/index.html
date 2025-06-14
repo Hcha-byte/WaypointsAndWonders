@@ -1,44 +1,19 @@
 <!DOCTYPE html>
+<!-- index.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="content" xmlns="http://www.w3.org/1999/html">Posts</h1>
+<h1 class="content">Posts</h1>
 
-<div class="content">
-	<table>
-		<tr>
-			<th>Title</th>
-			<th style="width: 50%">Content</th>
-			<th>Image</th>
-		</tr>
-		{% for post in posts %}
-		<tr>
-			<td><a href="{{ url_for('posts.view_post', post_id=post.id) }}">{{ post.title }}</a></td>
-			<td>{{ post.content }}</td>
+{% include "post_viewer.html" %}
 
-			<td>
-				{% if post.image_url and post.image_url|length > 0 %}
-				<div style="display: flex; flex-wrap: wrap; gap: 5px;">
-					{% for url in post.get_urls() %}
-					<a href="{{ url }}" data-lightbox="post-{{ post.id }}" data-title="{{ post.title }}">
-						<img src="{{ url }}" alt="Post Image"
-						     style="height: 80px; object-fit: cover; border-radius: 6px;" loading="lazy">
-					</a>
-					{% endfor %}
-				</div>
-				{% else %}
-				<em>No images</em>
-				{% endif %}
-			</td>
-
-		</tr>
-		{% endfor %}
-	</table>
-</div>
 {% if current_user.is_admin %}
 <p class="content">
 	<button type="button" class="button"><a href="{{ url_for('admin.add_post') }}">Add Post</a></button>
+	<button type="button" class="button"><a href="{{ url_for('admin.admin') }}">Admin Panel</a></button>
 </p>
+
+
 {% endif %}
 
 {% endblock %}
