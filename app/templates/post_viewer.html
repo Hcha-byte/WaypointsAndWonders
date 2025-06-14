@@ -1,0 +1,33 @@
+<!--post_viewer.html-->
+
+<div class="content">
+	<table>
+		<tr>
+			<th>Title</th>
+			<th style="width: 50%">Content</th>
+			<th>Image</th>
+		</tr>
+		{% for post in posts %}
+		<tr>
+			<td><a href="{{ url_for('posts.view_post', post_id=post.id) }}">{{ post.title }}</a></td>
+			<td>{{ post.content }}</td>
+
+			<td>
+				{% if post.image_url and post.image_url|length > 0 %}
+				<div style="display: flex; flex-wrap: wrap; gap: 5px;">
+					{% for url in post.get_urls() %}
+					<a href="{{ url }}" data-lightbox="post-{{ post.id }}" data-title="{{ post.title }}">
+						<img src="{{ url }}" alt="Post Image"
+						     style="height: 80px; object-fit: cover; border-radius: 6px;" loading="lazy">
+					</a>
+					{% endfor %}
+				</div>
+				{% else %}
+				<em>No images</em>
+				{% endif %}
+			</td>
+
+		</tr>
+		{% endfor %}
+	</table>
+</div>
