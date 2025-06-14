@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from flask import render_template, Response, render_template_string, url_for, redirect, request
 from flask_login import current_user
@@ -38,6 +39,16 @@ def home():
 		return render_template('index.html', title='Home', posts=None)
 
 
+@main_bp.route("/search")
+def search():
+	query = request.args.get("q", "")
+	if not query:
+		return redirect(url_for("index"))
+	
+	posts = Post.search_posts(query)
+	return render_template("search.html", posts=posts, query=query)
+
+
 @main_bp.route('/sitemap.xml')
 def sitemap():
 	"""Generate an XML sitemap dynamically from the database."""
@@ -58,13 +69,13 @@ def sitemap():
 		})
 	
 	sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {''.join(
+	<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	{''.join(
 		f'<url><loc>{url["loc"]}</loc><lastmod>{url["lastmod"]}</lastmod><changefreq>weekly</changefreq><priority>{url["priority"]}</priority></url>'
 		for url in urls
 	)}
-    </urlset>
-    """
+	</urlset>
+	"""
 	
 	return Response(sitemap_xml, mimetype="application/xml")
 
@@ -88,6 +99,10 @@ Allow: {url_for('main.home')}
 Sitemap: https://waypointsandwonders.com/sitemap.xml
 """
 	return Response(content, mimetype='text/plain')
+
+
+MEILI_URL = os.getenv("MEILI_URL", "http://meilisearch:7700")
+MEILI_API_KEY = os.getenv("MEILI_API_KEY")
 
 
 @main_bp.route('/terms_and_privacy')

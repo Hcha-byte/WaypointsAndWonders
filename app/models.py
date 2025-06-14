@@ -1,9 +1,11 @@
 import re
 from typing import overload, List, Union
-from werkzeug.security import check_password_hash, generate_password_hash
+
 from flask_login import UserMixin, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from .database import db
+from .extensions import client
 
 
 def generate_next_post_id():
@@ -27,6 +29,35 @@ class Post(db.Model):
 	lat = db.Column(db.Float, nullable=True)
 	long = db.Column(db.Float, nullable=True)
 	
+	@staticmethod
+	def search_posts(query):
+		index = client.index('posts')
+		results = index.search(query)
+		ids = [hit['id'] for hit in results['hits']]
+		return Post.query.filter(Post.id.in_(ids)).all()
+	
+	@staticmethod
+	def index_post(post):
+		index = client.index('posts')
+		index.add_documents([{
+			'id': post.id,
+			'title': post.title,
+			'content': post.content,
+			'created_at': post.timestamp.isoformat()  # Optional
+		}])
+	
+	@staticmethod
+	def reindex_all():
+		index = client.index('posts')
+		posts = Post.query.all()
+		docs = [{
+			'id': post.id,
+			'title': post.title,
+			'content': post.content
+		} for post in posts]
+		index.add_documents(docs)
+	
+	# noinspection PyNestedDecorators
 	@overload
 	@staticmethod
 	def get_urls(char_list: List[str]) -> List[str]:
@@ -36,6 +67,7 @@ class Post(db.Model):
 	def get_urls(self) -> List[str]:
 		...
 	
+	# noinspection PyMethodParameters
 	def get_urls(self_or_char_list: Union['Post', List[str]]) -> List[str]:
 		# Detect whether this is called with a char list or from an instance
 		if isinstance(self_or_char_list, list):
@@ -59,12 +91,14 @@ class Post(db.Model):
 			full_str = full_str[1:-1]
 		
 		# Step 4: Insert comma before every http/https after the first one
+		# noinspection RegExpRedundantEscape
 		full_str = re.sub(r'(https?:\/\/)', r',\1', full_str, count=0)
 		
 		# Step 5: Split on commas
 		urls = [url.strip() for url in full_str.split(',') if url.strip()]
 		
 		return urls
+
 
 def generate_next_user_id():
 	last_user = User.query.filter_by(is_oauth=False).order_by(db.cast(User.id, db.Integer).desc()).first()
