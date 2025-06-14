@@ -11,6 +11,11 @@ MEILI_URL = os.getenv("MEILI_URL", "http://meilisearch:7700")
 MEILI_API_KEY = os.getenv("MEILI_API_KEY")
 
 
+@search_bp.route('/', methods=['GET', 'POST'])
+def search():
+	return render_template('search.html', title='Search')
+
+
 @search_bp.route("meili/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 @admin_required
 def proxy_meilisearch(path):
