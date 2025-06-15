@@ -43,7 +43,7 @@ def test_meili():
 def index_all():
 	"""Index all documents in the MeiliSearch index."""
 	if request.args.get('auth') != MEILI_API_KEY:
-		return render_template('search_auth.html', title='Confirm Reindex')
+		return render_template('search_auth.html', title='Confirm Reindex', auth=MEILI_API_KEY)
 	else:
 		Post.reindex_all()
 		flash('Reindex started', 'success')
