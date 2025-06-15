@@ -1,5 +1,6 @@
 import os
 
+import brotli
 import requests
 from flask import request, Response, render_template, flash, redirect, url_for
 
@@ -49,9 +50,16 @@ def proxy_meilisearch_root():
 	)
 	
 	content = response.content
-	if response.headers.get("Content-Encoding") == "br":
-		import brotli
-		content = brotli.decompress(content)
+	content_encoding = response.headers.get("Content-Encoding", "").lower()
+	
+	# Only decode if it's Brotli
+	if content_encoding == "br":
+		try:
+			content = brotli.decompress(content)
+		except brotli.error as e:
+			return Response(
+				f"Brotli decompression failed: {str(e)}", status=500
+			)
 	
 	return Response(
 		content,
