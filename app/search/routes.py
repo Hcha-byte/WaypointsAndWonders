@@ -24,35 +24,81 @@ def search():
 	return render_template('search.html', title='Search')
 
 
+@search_bp.route("/meili/", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+@admin_required
+def proxy_meilisearch():
+	url = f"{MEILI_URL.rstrip('/')}/"
+	
+	data = request.get_data() if request.method in ['POST', 'PUT', 'PATCH'] else None
+	
+	headers = {
+		k: v for k, v in request.headers
+		if k.lower() not in ['host', 'content-length', 'content-encoding', 'transfer-encoding', 'authorization']
+	}
+	headers["Authorization"] = f"Bearer {MEILI_API_KEY}"
+	if data:
+		headers["Content-Type"] = request.headers.get("Content-Type", "application/json")
+	
+	response = requests.request(
+		method=request.method,
+		url=url,
+		headers=headers,
+		data=data,
+		cookies=request.cookies,
+		allow_redirects=True
+	)
+	
+	content = response.content
+	if response.headers.get("Content-Encoding") == "br":
+		import brotli
+		content = brotli.decompress(content)
+	
+	return Response(
+		content,
+		status=response.status_code,
+		headers={k: v for k, v in response.headers.items() if k.lower() not in [
+			'content-encoding', 'transfer-encoding', 'content-length'
+		]},
+		content_type=response.headers.get("Content-Type", "application/json")
+	)
+
+
 @search_bp.route("/meili/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 @admin_required
 def proxy_meilisearch(path):
 	path = path.lstrip('/')
 	url = f"{MEILI_URL.rstrip('/')}/{path}"
 	
-	# Forward headers correctly, removing Host and adding Bearer auth
-	headers = {key: value for key, value in request.headers if key.lower() != 'host'}
-	headers["Authorization"] = f"Bearer {MEILI_API_KEY}"
+	data = request.get_data() if request.method in ['POST', 'PUT', 'PATCH'] else None
 	
-	# Send request to MeiliSearch
+	headers = {
+		k: v for k, v in request.headers
+		if k.lower() not in ['host', 'content-length', 'content-encoding', 'transfer-encoding', 'authorization']
+	}
+	headers["Authorization"] = f"Bearer {MEILI_API_KEY}"
+	if data:
+		headers["Content-Type"] = request.headers.get("Content-Type", "application/json")
+	
 	response = requests.request(
 		method=request.method,
 		url=url,
 		headers=headers,
-		data=request.get_data(),
+		data=data,
 		cookies=request.cookies,
 		allow_redirects=True
 	)
-	print("Response headers:", response.headers)
-	print("Response content-type:", response.headers.get("Content-Type"))
-	print("Response content (first 200 chars):", response.content[:200])
 	
-	# Return the response to the client
+	content = response.content
+	if response.headers.get("Content-Encoding") == "br":
+		import brotli
+		content = brotli.decompress(content)
+	
 	return Response(
-		response.content,
+		content,
 		status=response.status_code,
-		headers={k: v for k, v in response.headers.items() if
-		         k.lower() not in ['transfer-encoding', 'content-length']},
+		headers={k: v for k, v in response.headers.items() if k.lower() not in [
+			'content-encoding', 'transfer-encoding', 'content-length'
+		]},
 		content_type=response.headers.get("Content-Type", "application/json")
 	)
 
