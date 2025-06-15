@@ -1,14 +1,13 @@
 import os
 
-import brotli
 import requests
-from flask import request, Response, render_template, flash, redirect, url_for
+from flask import request, render_template, flash, redirect, url_for
 
 from . import search_bp
 from ..decoraters import admin_required
 from ..models import Post
 
-MEILI_URL = os.getenv("MEILI_URL", "http://meilisearch.railway.internal:7700")
+MEILI_URL = os.getenv("MEILI_URL", "meilisearch-main.up.railway.app")
 # Ensure the URL has a scheme
 if not MEILI_URL.startswith(('http://', 'https://')):
 	MEILI_URL = f"http://{MEILI_URL}"
@@ -23,92 +22,6 @@ def search():
 		return render_template('search.html', posts=posts, query=q, title='Search')
 	
 	return render_template('search.html', title='Search')
-
-
-@search_bp.route("/meili/", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-@admin_required
-def proxy_meilisearch_root():
-	url = f"{MEILI_URL.rstrip('/')}/"
-	
-	data = request.get_data() if request.method in ['POST', 'PUT', 'PATCH'] else None
-	
-	headers = {
-		k: v for k, v in request.headers
-		if k.lower() not in ['host', 'content-length', 'content-encoding', 'transfer-encoding', 'authorization']
-	}
-	headers["Authorization"] = f"Bearer {MEILI_API_KEY}"
-	if data:
-		headers["Content-Type"] = request.headers.get("Content-Type", "application/json")
-	
-	response = requests.request(
-		method=request.method,
-		url=url,
-		headers=headers,
-		data=data,
-		cookies=request.cookies,
-		allow_redirects=True
-	)
-	
-	content = response.content
-	content_encoding = response.headers.get("Content-Encoding", "").lower()
-	
-	# Only decode if it's Brotli
-	if content_encoding == "br":
-		try:
-			content = brotli.decompress(content)
-		except brotli.error as e:
-			return Response(
-				f"Brotli decompression failed: {str(e)}", status=500
-			)
-	
-	return Response(
-		content,
-		status=response.status_code,
-		headers={k: v for k, v in response.headers.items() if k.lower() not in [
-			'content-encoding', 'transfer-encoding', 'content-length'
-		]},
-		content_type=response.headers.get("Content-Type", "application/json")
-	)
-
-
-@search_bp.route("/meili/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-@admin_required
-def proxy_meilisearch(path):
-	path = path.lstrip('/')
-	url = f"{MEILI_URL.rstrip('/')}/{path}"
-	
-	data = request.get_data() if request.method in ['POST', 'PUT', 'PATCH'] else None
-	
-	headers = {
-		k: v for k, v in request.headers
-		if k.lower() not in ['host', 'content-length', 'content-encoding', 'transfer-encoding', 'authorization']
-	}
-	headers["Authorization"] = f"Bearer {MEILI_API_KEY}"
-	if data:
-		headers["Content-Type"] = request.headers.get("Content-Type", "application/json")
-	
-	response = requests.request(
-		method=request.method,
-		url=url,
-		headers=headers,
-		data=data,
-		cookies=request.cookies,
-		allow_redirects=True
-	)
-	
-	content = response.content
-	if response.headers.get("Content-Encoding") == "br":
-		import brotli
-		content = brotli.decompress(content)
-	
-	return Response(
-		content,
-		status=response.status_code,
-		headers={k: v for k, v in response.headers.items() if k.lower() not in [
-			'content-encoding', 'transfer-encoding', 'content-length'
-		]},
-		content_type=response.headers.get("Content-Type", "application/json")
-	)
 
 
 @search_bp.route("/test-meili")

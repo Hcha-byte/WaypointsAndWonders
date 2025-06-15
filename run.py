@@ -1,6 +1,6 @@
 from flask import render_template, redirect, abort, request
-from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_talisman import Talisman
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app import create_app, db, User
 from app.models import Post
@@ -11,6 +11,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # <editor-fold desc="Error handlers">
 
+
 @app.errorhandler(404)
 def page_not_found(e):
 	url = request.path
@@ -18,35 +19,34 @@ def page_not_found(e):
 
 
 csp = {
-    'default-src': ["'self'"],
-    'img-src': [
-        "'self'",
-        "data:",
-        "https://res.cloudinary.com",
-        "https://polarsteps.s3.amazonaws.com",
-        "https://developers.google.com/identity/images/g-logo.png",
-        "https://lh3.googleusercontent.com",
-	    "https://cdn.jsdelivr.net"
-    ],
-    'script-src': [
-        "'self'",
-        "'unsafe-inline'",  # ✅ Required for Lightbox2 to work
-        "https://cdn.jsdelivr.net",
-	    "https://code.jquery.com"
-    ],
-    'script-src-elem': [
-        "'self'",
-        "'unsafe-inline'",  # ✅ Required for Lightbox2 to work
-        "https://cdn.jsdelivr.net",
-	    "https://code.jquery.com"
-    ],
-    'style-src': [
-        "'self'",
-        "'unsafe-inline'",  # ✅ Required for Lightbox2 CSS
-        "https://cdn.jsdelivr.net"
-    ]
+	'default-src': ["'self'"],
+	'img-src': [
+		"'self'",
+		"data:",
+		"https://res.cloudinary.com",
+		"https://polarsteps.s3.amazonaws.com",
+		"https://developers.google.com/identity/images/g-logo.png",
+		"https://lh3.googleusercontent.com",
+		"https://cdn.jsdelivr.net"
+	],
+	'script-src': [
+		"'self'",
+		"'unsafe-inline'",  # ✅ Required for Lightbox2 to work
+		"https://cdn.jsdelivr.net",
+		"https://code.jquery.com"
+	],
+	'script-src-elem': [
+		"'self'",
+		"'unsafe-inline'",  # ✅ Required for Lightbox2 to work
+		"https://cdn.jsdelivr.net",
+		"https://code.jquery.com"
+	],
+	'style-src': [
+		"'self'",
+		"'unsafe-inline'",  # ✅ Required for Lightbox2 CSS
+		"https://cdn.jsdelivr.net"
+	]
 }
-
 
 Talisman(app, force_https=True, content_security_policy=csp)
 
