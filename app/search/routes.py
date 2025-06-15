@@ -26,7 +26,7 @@ def search():
 
 @search_bp.route("/meili/", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 @admin_required
-def proxy_meilisearch():
+def proxy_meilisearch_root():
 	url = f"{MEILI_URL.rstrip('/')}/"
 	
 	data = request.get_data() if request.method in ['POST', 'PUT', 'PATCH'] else None
