@@ -27,7 +27,7 @@ def proxy_meilisearch(path):
 	# Forward the request to MeiliSearch
 	url = f"{MEILI_URL}/{path}"
 	headers = {key: value for key, value in request.headers if key != 'Host'}
-	headers["X-Meili-API-Key"] = MEILI_API_KEY
+	headers["X-Meili-MASTER-Key"] = MEILI_API_KEY
 	
 	response = requests.request(
 		method=request.method,
