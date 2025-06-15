@@ -34,14 +34,20 @@ def proxy_meilisearch(path):
 	headers = {key: value for key, value in request.headers if key != 'Host'}
 	headers["X-Meili-MASTER-Key"] = MEILI_API_KEY
 	
-	response = requests.request(
-		method=request.method,
-		url=url,
-		headers=headers,
-		data=request.get_data(),
-		cookies=request.cookies,
-		allow_redirects=False
-	)
+	while True:
+		response = requests.request(
+			method=request.method,
+			url=url,
+			headers=headers,
+			data=request.get_data(),
+			cookies=request.cookies,
+			allow_redirects=True
+		)
+		# Retry on 5xx errors and 4xx errors
+		if not 400 <= response.status_code < 600:
+			break
+		else:
+			url = f"{MEILI_URL.rstrip('/')}/indexes"
 	
 	# Forward response back to client
 	return Response(
