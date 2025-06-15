@@ -33,7 +33,6 @@ def proxy_meilisearch(path):
 	# Forward headers correctly, removing Host and adding Bearer auth
 	headers = {key: value for key, value in request.headers if key.lower() != 'host'}
 	headers["Authorization"] = f"Bearer {MEILI_API_KEY}"
-	headers["Content-Type"] = "application/json"
 	
 	# Send request to MeiliSearch
 	response = requests.request(
@@ -44,13 +43,16 @@ def proxy_meilisearch(path):
 		cookies=request.cookies,
 		allow_redirects=True
 	)
+	print("Response headers:", response.headers)
+	print("Response content-type:", response.headers.get("Content-Type"))
+	print("Response content (first 200 chars):", response.content[:200])
 	
 	# Return the response to the client
 	return Response(
 		response.content,
 		status=response.status_code,
 		headers={k: v for k, v in response.headers.items() if
-		         k.lower() not in ['content-encoding', 'transfer-encoding', 'content-length']},
+		         k.lower() not in ['transfer-encoding', 'content-length']},
 		content_type=response.headers.get("Content-Type", "application/json")
 	)
 
