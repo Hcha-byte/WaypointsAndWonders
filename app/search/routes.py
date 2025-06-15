@@ -8,6 +8,9 @@ from ..decoraters import admin_required
 from ..models import Post
 
 MEILI_URL = os.getenv("MEILI_URL", "http://meilisearch:7700")
+# Ensure the URL has a scheme
+if not MEILI_URL.startswith(('http://', 'https://')):
+	MEILI_URL = f"http://{MEILI_URL}"
 MEILI_API_KEY = os.getenv("MEILI_API_KEY")
 
 
@@ -25,7 +28,9 @@ def search():
 @admin_required
 def proxy_meilisearch(path):
 	# Forward the request to MeiliSearch
-	url = f"{MEILI_URL}/{path}"
+	# Remove any leading slashes from the path to prevent double slashes
+	path = path.lstrip('/')
+	url = f"{MEILI_URL.rstrip('/')}/{path}"
 	headers = {key: value for key, value in request.headers if key != 'Host'}
 	headers["X-Meili-MASTER-Key"] = MEILI_API_KEY
 	
