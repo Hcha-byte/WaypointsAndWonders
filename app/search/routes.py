@@ -30,7 +30,8 @@ def search():
 def proxy_meilisearch(path):
 	url = f"{MEILI_URL.rstrip('/')}/{path.lstrip('/')}"
 	headers = {k: v for k, v in request.headers if k.lower() != 'host'}
-	headers["X-Meili-API-Key"] = MEILI_API_KEY  # ✅ correct header for MeiliSearch v1.0+
+	headers["Authorization"] = "Bearer " + MEILI_API_KEY  # ✅ correct header for MeiliSearch v1.0+
+	headers["Content-Type"] = "application/json"
 	
 	try:
 		resp = requests.request(
