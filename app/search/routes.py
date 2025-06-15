@@ -1,4 +1,3 @@
-import logging
 import os
 
 import requests
@@ -28,26 +27,30 @@ def search():
 @search_bp.route("/meili/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 @admin_required
 def proxy_meilisearch(path):
-	url = f"{MEILI_URL.rstrip('/')}/{path.lstrip('/')}"
-	headers = {k: v for k, v in request.headers if k.lower() != 'host'}
-	headers["Authorization"] = "Bearer " + MEILI_API_KEY  # ✅ correct header for MeiliSearch v1.0+
-	headers["Content-Type"] = "application/json"
+	path = path.lstrip('/')
+	url = f"{MEILI_URL.rstrip('/')}/{path}"
 	
-	try:
-		resp = requests.request(
-			method=request.method,
-			url=url,
-			headers=headers,
-			data=request.get_data(),
-			cookies=request.cookies,
-			allow_redirects=True,
-			timeout=5
-		)
-	except requests.exceptions.RequestException as e:
-		logging.exception("MeiliSearch proxy failed:")
-		return f"MeiliSearch connection failed: {e}", 502
+	# Forward headers correctly, removing Host and adding Bearer auth
+	headers = {key: value for key, value in request.headers if key.lower() != 'host'}
+	headers["Authorization"] = f"Bearer {MEILI_API_KEY}"
 	
-	return Response(resp.content, status=resp.status_code, headers=dict(resp.headers))
+	# Send request to MeiliSearch
+	response = requests.request(
+		method=request.method,
+		url=url,
+		headers=headers,
+		data=request.get_data(),
+		cookies=request.cookies,
+		allow_redirects=True
+	)
+	
+	# Return the response to the client
+	return Response(
+		response.content,
+		status=response.status_code,
+		headers={k: v for k, v in response.headers.items() if
+		         k.lower() not in ['content-encoding', 'transfer-encoding', 'content-length']}
+	)
 
 
 @search_bp.route("/test-meili")
