@@ -1,3 +1,4 @@
+import logging
 import os
 
 import requests
@@ -24,37 +25,42 @@ def search():
 	return render_template('search.html', title='Search')
 
 
-@search_bp.route("meili/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+@search_bp.route("/meili/<path:path>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 @admin_required
 def proxy_meilisearch(path):
-	# Forward the request to MeiliSearch
-	# Remove any leading slashes from the path to prevent double slashes
-	path = path.lstrip('/')
-	url = f"{MEILI_URL.rstrip('/')}/{path}"
-	headers = {key: value for key, value in request.headers if key != 'Host'}
-	headers["X-Meili-MASTER-Key"] = MEILI_API_KEY
+	url = f"{MEILI_URL.rstrip('/')}/{path.lstrip('/')}"
+	headers = {k: v for k, v in request.headers if k.lower() != 'host'}
+	headers["X-Meili-API-Key"] = MEILI_API_KEY  # ✅ correct header for MeiliSearch v1.0+
 	
-	while True:
-		response = requests.request(
+	try:
+		resp = requests.request(
 			method=request.method,
 			url=url,
 			headers=headers,
 			data=request.get_data(),
 			cookies=request.cookies,
-			allow_redirects=True
+			allow_redirects=True,
+			timeout=5
 		)
-		# Retry on 5xx errors and 4xx errors
-		if not response.status_code == 404:
-			break
-		else:
-			url = f"{MEILI_URL.rstrip('/')}/indexes"
+	except requests.exceptions.RequestException as e:
+		logging.exception("MeiliSearch proxy failed:")
+		return f"MeiliSearch connection failed: {e}", 502
 	
-	# Forward response back to client
-	return Response(
-		response.content,
-		status=response.status_code,
-		headers=dict(response.headers)
-	)
+	return Response(resp.content, status=resp.status_code, headers=dict(resp.headers))
+
+
+@search_bp.route("/test-meili")
+@admin_required
+def test_meili():
+	try:
+		response = requests.get(
+			f"{MEILI_URL.rstrip('/')}/health",
+			headers={"X-Meili-API-Key": MEILI_API_KEY},
+			timeout=5
+		)
+		return response.text, response.status_code
+	except Exception as e:
+		return f"Failed to connect: {e}", 500
 
 
 @search_bp.route('/index_all')
