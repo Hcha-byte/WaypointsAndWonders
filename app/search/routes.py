@@ -7,7 +7,7 @@ from . import search_bp
 from ..decoraters import admin_required
 from ..models import Post
 
-MEILI_URL = os.getenv("MEILI_URL", "http://meilisearch:7700")
+MEILI_URL = os.getenv("MEILI_URL", "http://meilisearch.railway.internal:7700")
 # Ensure the URL has a scheme
 if not MEILI_URL.startswith(('http://', 'https://')):
 	MEILI_URL = f"http://{MEILI_URL}"
@@ -44,7 +44,7 @@ def proxy_meilisearch(path):
 			allow_redirects=True
 		)
 		# Retry on 5xx errors and 4xx errors
-		if not 400 <= response.status_code < 600:
+		if not response.status_code == 404:
 			break
 		else:
 			url = f"{MEILI_URL.rstrip('/')}/indexes"
