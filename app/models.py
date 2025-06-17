@@ -5,7 +5,8 @@ from flask_login import UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .database import db
-from .extensions import client
+from .decoraters import background_job
+from .extensions import client, redis_conn
 
 
 def generate_next_post_id():
@@ -14,6 +15,35 @@ def generate_next_post_id():
 	if last_post and last_post.id.isdigit():
 		return str(int(last_post.id) + 1)
 	return "1"
+
+
+def reindex_all():
+	print("Starting reindex")
+	
+	index = client.index('posts')
+	posts = Post.query.all()
+	batch_size = 100
+	total = len(posts)
+	
+	for i in range(0, total, batch_size):
+		batch = posts[i:i + batch_size]
+		docs = [{
+			'id': post.id,
+			'title': post.title,
+			'content': post.content
+		} for post in batch]
+		
+		try:
+			index.add_documents(docs)
+			# Update progress
+			print(f"Indexed batch {i // batch_size + 1}")
+		except Exception as e:
+			print(f"Error indexing batch {i // batch_size + 1}: {e}")
+			raise e  # This will cause job to be marked as failed
+	print("Reindex complete")
+
+
+# Ensure we hit 100%
 
 
 class Post(db.Model):
@@ -46,16 +76,31 @@ class Post(db.Model):
 			'created_at': post.timestamp.isoformat()  # Optional
 		}])
 	
+	@background_job
 	@staticmethod
 	def reindex_all():
 		index = client.index('posts')
 		posts = Post.query.all()
-		docs = [{
-			'id': post.id,
-			'title': post.title,
-			'content': post.content
-		} for post in posts]
-		index.add_documents(docs)
+		batch_size = 100
+		total = len(posts)
+		redis_conn.set("reindex_total", total)
+		
+		for i in range(0, total, batch_size):
+			batch = posts[i:i + batch_size]
+			docs = [{
+				'id': post.id,
+				'title': post.title,
+				'content': post.content
+			} for post in batch]
+			
+			try:
+				index.add_documents(docs)
+				redis_conn.set("reindex_progress", i + len(batch))  # Update progress
+			except Exception as e:
+				print(f"Error indexing batch {i // batch_size + 1}: {e}")
+				raise e  # This will cause job to be marked as failed
+		
+		redis_conn.set("reindex_progress", total)  # Ensure we hit 100%
 	
 	# noinspection PyNestedDecorators
 	@overload

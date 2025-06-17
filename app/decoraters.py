@@ -1,6 +1,9 @@
-from flask_login import current_user, login_required
 from functools import wraps
+
 from flask import flash, redirect, url_for, request
+from flask_login import current_user, login_required
+
+from app.extensions import q
 
 
 def is_bot():
@@ -11,6 +14,7 @@ def is_bot():
 	]
 	return any(bot in user_agent for bot in known_bots)
 
+
 def admin_required(f):
 	@wraps(f)
 	@login_required
@@ -19,6 +23,7 @@ def admin_required(f):
 			flash("Access denied: Admins only", "danger")
 			return redirect(url_for("main.home"))  # Redirect non-admin users
 		return f(*args, **kwargs)
+	
 	return decorated_function
 
 
@@ -32,4 +37,15 @@ def login_bot(f):
 		else:
 			# Preserve the original requested URL in 'next' parameter
 			return redirect(url_for("auth.login", next=request.path))
+	
 	return decorated_function
+
+
+def background_job(func):
+	@wraps(func)
+	def wrapper(*args, **kwargs):
+		# Enqueue function and args into RQ
+		job = q.enqueue(func, *args, **kwargs)
+		return job
+	
+	return wrapper

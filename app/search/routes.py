@@ -1,11 +1,13 @@
 import os
 
 import requests
-from flask import request, render_template, flash, redirect, url_for
+from flask import request, render_template, flash, redirect, url_for, session, jsonify
+from rq.job import Job
 
 from . import search_bp
 from ..decoraters import admin_required
-from ..models import Post
+from ..extensions import redis_conn
+from ..models import Post, reindex_all
 
 MEILI_URL = os.getenv("MEILI_URL", "meilisearch-main.up.railway.app")
 # Ensure the URL has a scheme
@@ -38,13 +40,39 @@ def test_meili():
 		return f"Failed to connect: {e}", 500
 
 
-@search_bp.route('/index_all')
+@search_bp.route('/index_all', methods=['GET', 'POST'])
 @admin_required
 def index_all():
 	"""Index all documents in the MeiliSearch index."""
-	if request.args.get('auth') != MEILI_API_KEY:
+	if request.form.get('auth', "") != MEILI_API_KEY:
 		return render_template('search_auth.html', title='Confirm Reindex', auth=MEILI_API_KEY)
 	else:
-		Post.reindex_all()
-		flash('Reindex started', 'success')
-		return redirect(url_for('main.home'))
+		job = reindex_all()
+		session['reindex_job_id'] = job.id  # Store it in session
+		flash(f'Reindex job {job.id} started. It may take a few minutes.', 'success')
+		
+		return redirect(url_for('search.reindex_all_progress'))
+
+
+@search_bp.route('/reindex_all_progress')
+@admin_required
+def reindex_all_progress():
+	job_id = session.get('reindex_job_id')
+	if not job_id:
+		return jsonify({"status": "not_started"})
+	
+	try:
+		job = Job.fetch(job_id, connection=redis_conn)
+		
+		progress = int(redis_conn.get("reindex_progress") or 0)
+		total = int(redis_conn.get("reindex_total") or 1)
+		percent = int((progress / total) * 100)
+		
+		if job.is_finished:
+			return jsonify({"status": "finished", "progress": 100})
+		elif job.is_failed:
+			return jsonify({"status": "failed", "error": str(job.latest_result())})
+		else:
+			return jsonify({"status": "in_progress", "progress": percent})
+	except Exception as e:
+		return jsonify({"status": "error", "message": str(e)})

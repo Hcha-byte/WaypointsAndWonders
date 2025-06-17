@@ -3,8 +3,10 @@ import os
 
 import cloudinary.uploader
 import meilisearch
+import redis
 from authlib.integrations.flask_client import OAuth
 from flask_mail import Mail
+from rq import Queue
 
 mail = Mail()
 
@@ -32,3 +34,7 @@ client = meilisearch.Client(
 	os.environ["MEILI_URL"],
 	os.environ["MEILI_API_KEY"]
 )
+
+# Connect to Redis
+redis_conn = redis.from_url(os.getenv("REDIS_URL"))
+q = Queue(connection=redis_conn)
