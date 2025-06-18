@@ -1,9 +1,7 @@
 import os
-import subprocess
 
 import requests
-from flask import request, render_template, session, jsonify
-from rq.job import Job
+from flask import request, render_template
 
 from . import search_bp
 from .. import TOSHI_URL
@@ -62,14 +60,16 @@ def test():
 
 @search_bp.route('/curl-toshi')
 def curl_toshi():
+	import socket
+	
 	try:
-		result = subprocess.check_output(
-			["curl", "-v", "http://toshi-deploy.railway.internal:8080"],
-			stderr=subprocess.STDOUT
-		).decode()
-		return f"<pre>{result}</pre>"
-	except subprocess.CalledProcessError as e:
-		return f"<pre>{e.output.decode()}</pre>"
+		sock = socket.create_connection(("toshi-deploy.railway.internal", 8080), timeout=5)
+		sock.sendall(b"GET / HTTP/1.1\r\nHost: toshi-deploy.railway.internal\r\n\r\n")
+		response = sock.recv(4096).decode()
+		sock.close()
+		return f"<pre>{response}</pre>"
+	except Exception as e:
+		return f"Socket connection failed: {e}", 500
 
 
 @search_bp.route('/index_all', methods=['GET', 'POST'])
@@ -77,27 +77,3 @@ def curl_toshi():
 def index_all():
 	"""Index all documents in the MeiliSearch index."""
 	pass
-
-
-@search_bp.route('/reindex_all_progress')
-@admin_required
-def reindex_all_progress():
-	job_id = session.get('reindex_job_id')
-	if not job_id:
-		return jsonify({"status": "not_started"})
-	
-	try:
-		job = Job.fetch(job_id, connection=redis_conn)
-		
-		progress = int(redis_conn.get("reindex_progress") or 0)
-		total = int(redis_conn.get("reindex_total") or 1)
-		percent = int((progress / total) * 100)
-		
-		if job.is_finished:
-			return jsonify({"status": "finished", "progress": 100})
-		elif job.is_failed:
-			return jsonify({"status": "failed", "error": str(job.latest_result())})
-		else:
-			return jsonify({"status": "in_progress", "progress": percent})
-	except Exception as e:
-		return jsonify({"status": "error", "message": str(e)})
