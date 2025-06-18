@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 import requests
 from flask import request, render_template, session, jsonify
@@ -57,6 +58,18 @@ def test():
 	except Exception as e:
 		return f"Failed to connect: {e}", 500
 	return f"Response 1: {response_1.text}\nResponse 2: {response_2.text}", 200
+
+
+@search_bp.route('/curl-toshi')
+def curl_toshi():
+	try:
+		result = subprocess.check_output(
+			["curl", "-v", "http://toshi-deploy.railway.internal:8080"],
+			stderr=subprocess.STDOUT
+		).decode()
+		return f"<pre>{result}</pre>"
+	except subprocess.CalledProcessError as e:
+		return f"<pre>{e.output.decode()}</pre>"
 
 
 @search_bp.route('/index_all', methods=['GET', 'POST'])
