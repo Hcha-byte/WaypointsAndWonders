@@ -7,7 +7,6 @@ from rq.job import Job
 from . import search_bp
 from .. import TOSHI_URL
 from ..decoraters import admin_required
-from ..extensions import redis_conn
 from ..models import Post
 
 MEILI_URL = os.getenv("MEILI_URL", "meilisearch-main.up.railway.app")
