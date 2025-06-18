@@ -1,13 +1,14 @@
 import os
 
 import requests
-from flask import request, render_template, flash, redirect, url_for, session, jsonify
+from flask import request, render_template, session, jsonify
 from rq.job import Job
 
 from . import search_bp
+from .. import TOSHI_URL
 from ..decoraters import admin_required
 from ..extensions import redis_conn
-from ..models import Post, reindex_all
+from ..models import Post
 
 MEILI_URL = os.getenv("MEILI_URL", "meilisearch-main.up.railway.app")
 # Ensure the URL has a scheme
@@ -40,18 +41,30 @@ def test_meili():
 		return f"Failed to connect: {e}", 500
 
 
+@search_bp.route('/test')
+def test():
+	try:
+		headers = {"Content-Type": "application/json"}
+		response_1 = requests.get(
+			TOSHI_URL,
+			headers=headers,
+			timeout=5
+		)
+		response_2 = requests.get(
+			"http://toshi-deploy.railway.internal:8080",
+			headers=headers,
+			timeout=5
+		)
+	except Exception as e:
+		return f"Failed to connect: {e}", 500
+	return f"Response 1: {response_1.text}\nResponse 2: {response_2.text}", 200
+
+
 @search_bp.route('/index_all', methods=['GET', 'POST'])
 @admin_required
 def index_all():
 	"""Index all documents in the MeiliSearch index."""
-	if request.form.get('auth', "") != MEILI_API_KEY:
-		return render_template('search_auth.html', title='Confirm Reindex', auth=MEILI_API_KEY)
-	else:
-		job = reindex_all()
-		session['reindex_job_id'] = job.id  # Store it in session
-		flash(f'Reindex job {job.id} started. It may take a few minutes.', 'success')
-		
-		return redirect(url_for('search.reindex_all_progress'))
+	pass
 
 
 @search_bp.route('/reindex_all_progress')

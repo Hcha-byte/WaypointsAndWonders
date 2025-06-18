@@ -5,7 +5,8 @@ from flask_migrate import Migrate
 from app.models import User
 from .database import db
 
-__version__ = '0.1.0'
+__version__ = '0.6.0'
+TOSHI_URL = "http://toshi-deploy-main.up.railway.app"
 
 
 def create_app():

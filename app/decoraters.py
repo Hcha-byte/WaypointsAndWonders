@@ -3,8 +3,6 @@ from functools import wraps
 from flask import flash, redirect, url_for, request
 from flask_login import current_user, login_required
 
-from app.extensions import q
-
 
 def is_bot():
 	user_agent = request.headers.get('User-Agent', '').lower()
@@ -39,13 +37,3 @@ def login_bot(f):
 			return redirect(url_for("auth.login", next=request.path))
 	
 	return decorated_function
-
-
-def background_job(func):
-	@wraps(func)
-	def wrapper(*args, **kwargs):
-		# Enqueue function and args into RQ
-		job = q.enqueue(func, *args, **kwargs)
-		return job
-	
-	return wrapper

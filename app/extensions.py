@@ -2,7 +2,6 @@
 import os
 
 import cloudinary.uploader
-import meilisearch
 import redis
 from authlib.integrations.flask_client import OAuth
 from flask_mail import Mail
@@ -28,11 +27,6 @@ google = oauth.register(
 	api_base_url='https://www.googleapis.com/oauth2/v2/',
 	client_kwargs={'scope': 'openid email profile'},
 	server_metadata_url="https://accounts.google.com/.well-known/openid-configuration"
-)
-
-client = meilisearch.Client(
-	os.environ["MEILI_URL"],
-	os.environ["MEILI_API_KEY"]
 )
 
 # Connect to Redis
