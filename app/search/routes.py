@@ -72,6 +72,19 @@ def curl_toshi():
 		return f"Socket connection failed: {e}", 500
 
 
+import socket
+
+
+@search_bp.route("/test_socket")
+def test_socket():
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	try:
+		s.connect(("toshi-deploy.railway.internal", 8080))
+		return "Connected via socket!", 200
+	except Exception as e:
+		return f"Socket error: {e}", 500
+
+
 @search_bp.route('/index_all', methods=['GET', 'POST'])
 @admin_required
 def index_all():
