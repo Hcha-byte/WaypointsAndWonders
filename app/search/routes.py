@@ -63,7 +63,7 @@ def curl_toshi():
 	import socket
 	
 	try:
-		sock = socket.create_connection(("toshi-deploy.railway.internal", 8080), timeout=5)
+		sock = socket.create_connection(("toshi-deploy.railway.internal"), timeout=5)
 		sock.sendall(b"GET / HTTP/1.1\r\nHost: toshi-deploy.railway.internal\r\n\r\n")
 		response = sock.recv(4096).decode()
 		sock.close()
