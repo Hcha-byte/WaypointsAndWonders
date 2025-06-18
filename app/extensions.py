@@ -1,11 +1,8 @@
 # app/extensions.py
-import os
 
 import cloudinary.uploader
-import redis
 from authlib.integrations.flask_client import OAuth
 from flask_mail import Mail
-from rq import Queue
 
 mail = Mail()
 
@@ -28,7 +25,3 @@ google = oauth.register(
 	client_kwargs={'scope': 'openid email profile'},
 	server_metadata_url="https://accounts.google.com/.well-known/openid-configuration"
 )
-
-# Connect to Redis
-redis_conn = redis.from_url(os.getenv("REDIS_URL"))
-q = Queue(connection=redis_conn)
