@@ -5,9 +5,9 @@ import requests
 from flask_login import UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from search.routes import health
 from .database import db
 from .search import TOSHI_URL, AUTH, INDEX_NAME
+from .search.routes import health
 
 
 def generate_next_post_id():
