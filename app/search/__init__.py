@@ -1,10 +1,7 @@
 import requests
-from flask import Blueprint
 
 from .config import TOSHI_URL, AUTH, INDEX_NAME
 from .routes import health
-
-search_bp = Blueprint("search", __name__)
 
 
 def ensure_index():

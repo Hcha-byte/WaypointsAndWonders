@@ -55,7 +55,7 @@ def create_app():
 	from app.posts import posts_bp
 	from app.admin import admin_bp
 	from app.auth import auth_bp
-	from app.search import search_bp
+	from app.search.routes import search_bp
 	
 	# Register Blueprints (for routes)
 	app.register_blueprint(main_bp)

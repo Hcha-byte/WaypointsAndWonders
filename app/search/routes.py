@@ -1,10 +1,11 @@
 import requests
-from flask import request, render_template
+from flask import request, render_template, Blueprint
 
-from . import search_bp
 from .config import TOSHI_URL, AUTH
 from ..decoraters import admin_required
 from ..models import Post
+
+search_bp = Blueprint("search", __name__)
 
 
 @search_bp.route('/', methods=['GET', 'POST'])
