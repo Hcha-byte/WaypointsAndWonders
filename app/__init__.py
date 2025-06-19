@@ -6,7 +6,6 @@ from app.models import User
 from .database import db
 
 __version__ = '0.6.0'
-TOSHI_URL = "http://toshi-deploy-main.up.railway.app"
 
 
 def create_app():
