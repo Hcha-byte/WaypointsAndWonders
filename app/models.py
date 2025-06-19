@@ -6,7 +6,7 @@ from flask_login import UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .database import db
-from .search import TOSHI_URL, AUTH, INDEX_NAME
+from .search.config import TOSHI_URL, AUTH, INDEX_NAME
 from .search.routes import health
 
 

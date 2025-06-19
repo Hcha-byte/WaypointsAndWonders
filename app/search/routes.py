@@ -1,7 +1,8 @@
 import requests
 from flask import request, render_template
 
-from . import search_bp, TOSHI_URL, AUTH
+from . import search_bp
+from .config import TOSHI_URL, AUTH
 from ..decoraters import admin_required
 from ..models import Post
 

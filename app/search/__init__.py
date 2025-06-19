@@ -1,14 +1,10 @@
 import requests
 from flask import Blueprint
-from requests.auth import HTTPBasicAuth
 
+from .config import TOSHI_URL, AUTH, INDEX_NAME
 from .routes import health
 
 search_bp = Blueprint("search", __name__)
-
-TOSHI_URL = "http://toshi-deploy-main.up.railway.app"
-AUTH = HTTPBasicAuth("user", "kFBIj6YqkZzSS6F8yDyzhO+WTOmyt3t9")
-INDEX_NAME = "posts"
 
 
 def ensure_index():
