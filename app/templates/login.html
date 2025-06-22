@@ -5,36 +5,36 @@
 <h1 class="content">Login</h1>
 
 <form action="{{ url_for('auth.login') }}" method="POST" class="form">
-    <div>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username">
-    </div>
-    <div>
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password">
-    </div>
-    <div>
-        <input type="checkbox" id="remember_me" name="remember_me">
+	<div>
+		<label for="username">Username</label>
+		<input type="text" id="username" name="username">
+	</div>
+	<div>
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password">
+	</div>
+	<div>
+		<input type="checkbox" id="remember_me" name="remember_me">
 		<label for="remember_me">Remember Me</label>
-    </div>
-    <button type="submit" class="button">Login</button>
-    <br>
-    <br>
-    <button type="button" class="button">
-	    <a href="{{ url_for('auth.signup') }}">Sign Up</a>
-    </button>
-    <button type="button" class="button">
-	    <a href="{{ url_for('auth.password_reset') }}">Forgot Password?</a>
-    </button>
+	</div>
+	<button type="submit" class="button">Login</button>
 	<br>
 	<br>
-	<div class="oauth_google">
+	<button type="button" class="button">
+		<a href="{{ url_for('auth.signup') }}">Sign Up</a>
+	</button>
+	<button type="button" class="button">
+		<a href="{{ url_for('auth.password_reset') }}">Forgot Password?</a>
+	</button>
+	<br>
+	<br>
+	<div class="oauth_google nav-item">
 		<button type="button" class="button" style="padding: 5px 10px">
-				<a href="{{ url_for('auth.login_google') }}">
-			        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" width="20px">
-					<span style="color: black" class="google-login-text">Google Login</span>
-				</a>
+			<a href="{{ url_for('auth.login_google') }}">
+				<img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" width="20px">
+			</a>
 		</button>
+		<p class="hover-label">Google Login</p>
 	</div>
 </form>
 {% endblock %}

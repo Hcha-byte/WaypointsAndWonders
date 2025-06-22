@@ -54,6 +54,33 @@ body {
   color: #404040;
 }
 
+.nav-item {
+	position: relative;
+	display: inline-block;
+	text-align: center;
+}
+
+.hover-label {
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: #333;
+	color: #fff;
+	padding: 4px 8px;
+	border-radius: 4px;
+	white-space: nowrap;
+	z-index: 100;
+}
+
+.nav-item:hover .hover-label {
+	visibility: visible;
+	opacity: 1;
+}
+
 /* Profile Image */
 .profile {
   display: flex;
@@ -74,14 +101,11 @@ body {
 /* Content Styles */
 
 .oauth_google img {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  border-radius: 45%;
 }
 
-.oauth_google img:hover {
-  border: 2px solid #404040;
-}
 
 .oauth_google {
   position: relative;
@@ -98,9 +122,6 @@ body {
   transition: opacity 0.3s ease-in-out;
 }
 
-.oauth_google img:hover + .google-login-text {
-  opacity: 1;
-}
 
 
 

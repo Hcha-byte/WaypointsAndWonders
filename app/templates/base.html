@@ -1,73 +1,80 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    <head>
-	    <meta name="google-site-verification" content="-LDluCfqO3yPOdYFnqbom5cPOxMeCJmkqRQJ7JHTkY8"/>
-        {% if title %}
-        <title>{{ title }} - WaypointsAndWonders</title>
-        {% else %}
-        <title> WaypointsAndWonders</title>
-        {% endif %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-	    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
-	        <!-- ✅ Load jQuery first -->
-	    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-			<!-- Lightbox2 CSS -->
-		<link href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" rel="stylesheet">
+<head>
+	<meta name="google-site-verification" content="-LDluCfqO3yPOdYFnqbom5cPOxMeCJmkqRQJ7JHTkY8"/>
+	{% if title %}
+	<title>{{ title }} - WaypointsAndWonders</title>
+	{% else %}
+	<title> WaypointsAndWonders</title>
+	{% endif %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+	<link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+	<!-- ✅ Load jQuery first -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- Lightbox2 CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" rel="stylesheet">
 
 
+</head>
+<body>
+<header class="navbar" style="padding: 30px">
+	<!-- Website Title -->
+	<div class="navbar__brand">
+		<a href="{{ url_for('main.home') }}">WaypointsAndWonders</a>
+	</div>
 
-    </head>
-	<body>
-    <header class="navbar" style="padding: 30px">
-        <!-- Website Title -->
-        <div class="navbar__brand">
-            <a href="{{ url_for('main.home') }}">WaypointsAndWonders</a>
-        </div>
-
-        <!-- Navigation Links -->
-        <nav class="navbar__links">
-			<div class="navbar__links">
-			{% if current_user.is_authenticated %}
-				{% if current_user.is_admin %}
-					<a href="{{ url_for('admin.admin') }}">Admin Panel</a>
-				{% endif %}
-			    <a href="{{ url_for('auth.logout') }}">Logout</a>
-			    <div class="profile">
-			        <a href="{{ url_for('auth.profile', user_id=current_user.id) }}">{{ current_user.username }}</a>
-			        <a href="{{ url_for('auth.profile', user_id=current_user.id) }}">
-			            <img src="{{ current_user.image_url }}" alt="Profile Picture">
-			        </a>
-			    </div>
+	<!-- Navigation Links -->
+	<nav class="navbar__links">
+		<div class="navbar__links">
+			<div class="nav-item">
+				<a href="{{ url_for('search.search') }}">
+					<img src="{{ url_for('static', filename='images/search.svg') }}" alt="Search">
+				</a>
+				<p class="hover-label">Search posts</p>
 			</div>
-            {% else %}
-                <a href="{{ url_for('auth.login') }}">Login</a>
-            {% endif %}
-        </nav>
-    </header>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
 
-                        {% for message in messages %}
-                        <div class="flash">
-                            {{ message }}
-                        </div>
-                        {% endfor %}
-            {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
-	<footer class="footer">
-		<h3>WayPointsAndWonders</h3>
-		<br>
-		<a href="{{ url_for('main.terms_and_privacy', _anchor='terms') }}">Terms of Service</a>
-		<a href="{{ url_for('main.terms_and_privacy', _anchor='privacy') }}">Privacy Policy</a>
-		<br>
-		<a href="mailto:contact@WaypointsAndWonders.com">Email Us</a>
-		<br>
-		<p>&copy; 2025 WaypointsAndWonders, all rights reserved</p>
-	</footer>
-	<!-- Lightbox2 JS -->
-	<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js"></script>
+			{% if current_user.is_authenticated %}
+			{% if current_user.is_admin %}
+			<a href="{{ url_for('admin.admin') }}">Admin Panel</a>
+			{% endif %}
+			<a href="{{ url_for('auth.logout') }}">Logout</a>
+			<div class="profile">
+				<a href="{{ url_for('auth.profile', user_id=current_user.id) }}">{{ current_user.username }}</a>
+				<a href="{{ url_for('auth.profile', user_id=current_user.id) }}">
+					<img src="{{ current_user.image_url }}" alt="Profile Picture">
+				</a>
+			</div>
+		</div>
+		{% else %}
+		<a href="{{ url_for('auth.login') }}">Login</a>
+		{% endif %}
+	</nav>
+</header>
 
-    </body>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+
+{% for message in messages %}
+<div class="flash">
+	{{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+{% block content %}{% endblock %}
+<footer class="footer">
+	<h3>WayPointsAndWonders</h3>
+	<br>
+	<a href="{{ url_for('main.terms_and_privacy', _anchor='terms') }}">Terms of Service</a>
+	<a href="{{ url_for('main.terms_and_privacy', _anchor='privacy') }}">Privacy Policy</a>
+	<br>
+	<a href="mailto:contact@WaypointsAndWonders.com">Email Us</a>
+	<br>
+	<p>&copy; 2025 WaypointsAndWonders, all rights reserved</p>
+</footer>
+<!-- Lightbox2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js"></script>
+
+</body>
 </html>

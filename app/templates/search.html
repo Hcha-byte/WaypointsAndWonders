@@ -2,17 +2,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-
 <form action="{{ url_for('search.search') }}" method="GET" class="form">
 	<div>
 		<h1><label for="q">Search</label></h1>
-		<input type="text" id="q" name="q">
+		<input type="text" id="q" name="q" {% if q %} value="{{ q }}" {% endif %}>
 	</div>
 	<button type="submit" class="button">Search</button>
 </form>
 
+{% if posts %}
 {% include "post_viewer.html" %}
-
-
+{% elif q %}
+<h2>No posts found for "{{ q }}"</h2>
+{% endif %}
 {% endblock %}
