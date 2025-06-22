@@ -7,7 +7,14 @@ from .database import db
 
 __version__ = '0.6.0'
 
+from dotenv import load_dotenv
 
+from .search import ensure_index
+
+load_dotenv()
+
+
+# noinspection PyTypeChecker
 def create_app():
 	app = Flask(__name__)
 	
@@ -55,7 +62,7 @@ def create_app():
 	from app.posts import posts_bp
 	from app.admin import admin_bp
 	from app.auth import auth_bp
-	from app.search.routes import search_bp
+	from app.search import search_bp
 	
 	# Register Blueprints (for routes)
 	app.register_blueprint(main_bp)
@@ -63,6 +70,12 @@ def create_app():
 	app.register_blueprint(posts_bp, url_prefix='/post')  # posts at /post/<id>
 	app.register_blueprint(admin_bp, url_prefix='/admin')
 	app.register_blueprint(auth_bp, url_prefix='/auth')
+	
+	from app.cli import index_all_command, search_command
+	app.cli.add_command(index_all_command)
+	app.cli.add_command(search_command)
+	
+	ensure_index()
 	
 	return app
 # </editor-fold>

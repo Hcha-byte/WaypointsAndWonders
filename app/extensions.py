@@ -1,6 +1,8 @@
 # app/extensions.py
+import os
 
 import cloudinary.uploader
+import typesense
 from authlib.integrations.flask_client import OAuth
 from flask_mail import Mail
 
@@ -25,3 +27,14 @@ google = oauth.register(
 	client_kwargs={'scope': 'openid email profile'},
 	server_metadata_url="https://accounts.google.com/.well-known/openid-configuration"
 )
+
+# noinspection PyTypeChecker
+client = typesense.Client({
+	'api_key': os.getenv('TYPESENSE_API_KEY', ''),  # must match Dockerfile
+	'nodes': [{
+		'host': 'typesense-main.up.railway.app',  # no https
+		'port': 443,
+		'protocol': 'https'
+	}],
+	'connection_timeout_seconds': 2
+})

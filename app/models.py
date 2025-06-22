@@ -1,13 +1,10 @@
 import re
 from typing import overload, List
 
-import requests
 from flask_login import UserMixin, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from .database import db
-from .search.config import TOSHI_URL, AUTH, INDEX_NAME
-from .search.routes import health
 
 
 def generate_next_post_id():
@@ -16,9 +13,6 @@ def generate_next_post_id():
 	if last_post and last_post.id.isdigit():
 		return str(int(last_post.id) + 1)
 	return "1"
-
-
-# Ensure we hit 100%
 
 
 class Post(db.Model):
@@ -33,99 +27,6 @@ class Post(db.Model):
 	location_name = db.Column(db.String(200), nullable=True)
 	lat = db.Column(db.Float, nullable=True)
 	long = db.Column(db.Float, nullable=True)
-	
-	@staticmethod
-	def search_posts(query_obj):
-		if not health():
-			print("Toshi is not running. Skipping post search.")
-			return None
-		
-		payload = query_obj
-		r = requests.post(
-			f"{TOSHI_URL}/{INDEX_NAME}/",
-			json=payload,
-			auth=AUTH
-		)
-		if r.status_code != 200:
-			print("Search failed:", r.text)
-			raise Exception("Toshi indexing error")
-		
-		return r.json()
-	
-	@staticmethod
-	def index_post(post: 'Post') -> None:
-		if not health():
-			print("Toshi is not running. Skipping post indexing.")
-			return None
-		
-		payload = \
-			{
-				"options": {"commit": False},
-				"document": {
-					"title": post.title,
-					"id": post.id,
-					"content": post.content,
-					"date_posted": int(post.date_posted.timestamp),
-					"location_name": post.location_name,
-				}
-			}
-		r = requests.put(
-			f"{TOSHI_URL}/{INDEX_NAME}/",
-			json=payload,
-			auth=AUTH
-		)
-		if r.status_code != 200:
-			print("Index failed:", r.text)
-			raise Exception("Toshi indexing error")
-		
-		flush = requests.get(f"{TOSHI_URL}/{INDEX_NAME}/_flush", auth=AUTH)
-		if flush.status_code != 200:
-			print("Flush failed:", flush.text)
-			raise Exception("Toshi flush error")
-		
-		return None
-	
-	@staticmethod
-	def bulk_index_posts() -> None:
-		if not health():
-			print("Toshi is not running. Skipping bulk post indexing.")
-			return None
-		
-		docs = []
-		
-		for post in Post.query.all():
-			doc = {
-				"options": {"commit": False},  # commit=False for performance
-				"document": {
-					"title": post.title,
-					"id": post.id,
-					"content": post.content,
-					"date_posted": int(post.date_posted.timestamp()),  # if it's a datetime object
-					"location_name": post.location_name
-				}
-			}
-			docs.append(doc)
-		
-		# Send bulk request to Toshi
-		response = requests.post(
-			f"{TOSHI_URL}/{INDEX_NAME}/_bulk",
-			json=docs,
-			auth=AUTH
-		)
-		
-		if response.status_code != 200:
-			print("Bulk index failed:", response.status_code)
-			print(response.text)
-			raise Exception("Toshi bulk indexing error")
-		
-		# Flush to commit the index
-		flush = requests.get(f"{TOSHI_URL}/{INDEX_NAME}/_flush", auth=AUTH)
-		if flush.status_code != 200:
-			print("Flush failed:", flush.text)
-			raise Exception("Toshi flush error")
-		
-		print("Bulk index completed and flushed.")
-		return None
 	
 	# noinspection PyNestedDecorators
 	@overload
