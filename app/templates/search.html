@@ -3,26 +3,16 @@
 
 {% block content %}
 
-<div class="content">
-	<h1>Search</h1>
-	<br>
-	<form action="{{ url_for('search.search') }}" method="GET" class="form">
-		<div>
-			<label for="q">Search</label>
-			<input type="text" id="q" name="query">
-		</div>
-		<button type="submit" class="button">Search</button>
-	</form>
-</div>
 
-{% if posts %}
-{% for post in posts %}
-<div class="content">
-	<h2><a href="{{ url_for('post.show', post_id=post.id) }}">{{ post.title }}</a></h2>
-	<p>{{ post.content }}</p>
-</div>
-{% endfor %}
-{% endif %}
+<form action="{{ url_for('search.search') }}" method="GET" class="form">
+	<div>
+		<h1><label for="q">Search</label></h1>
+		<input type="text" id="q" name="q">
+	</div>
+	<button type="submit" class="button">Search</button>
+</form>
+
+{% include "post_viewer.html" %}
 
 
 {% endblock %}

@@ -31,6 +31,15 @@ def create_app():
 	app.config['MAIL_USERNAME'] = 'contact@waypointsandwonders.com'  # Replace with your email
 	app.config['MAIL_PASSWORD'] = 'ropfy6-sapmyq-bujJer'  # Use an App Password if using Gmail
 	app.config['MAIL_DEFAULT_SENDER'] = 'contact@waypointsandwonders.com'
+	
+	app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+		"pool_pre_ping": True,  # Auto-detect & drop stale connections
+		"pool_recycle": 1800,  # Recycle connections every 30 minutes
+		"pool_size": 5,  # Keep only a few persistent connections
+		"max_overflow": 2,  # Allow a couple of temporary overflow connections
+		"pool_timeout": 15,  # Wait 15s for a connection from the pool
+	}
+	
 	app.config['GOOGLE_CLIENT_ID'] = '735507344079-1u1080giul9513s8sdhub5dam9vuuu4d.apps.googleusercontent.com'
 	app.config['GOOGLE_CLIENT_SECRET'] = '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'
 	# </editor-fold>
