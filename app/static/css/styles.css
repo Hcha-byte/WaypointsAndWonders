@@ -322,3 +322,24 @@ body {
   margin: 0;
   font-size: 20px;
 }
+
+.back-button-container {
+  margin: 1rem;
+}
+.back-button {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #eee;
+  color: #333;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 20px;
+  margin: 20px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.back-button:hover {
+  background-color: #ddd;
+}

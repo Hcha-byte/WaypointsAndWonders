@@ -6,7 +6,7 @@ from .funtions import search_posts
 
 @search_bp.route('/', methods=['GET'])
 def search():
-	q = request.args.get("q", None)
+	q = request.args.get("q")
 	if not q:
 		return render_template('search.html', title='Search')
 	else:

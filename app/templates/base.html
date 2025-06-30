@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% import 'macros.html' as macros %}
 
 <html lang="en">
 <head>
@@ -51,7 +52,11 @@
 		{% endif %}
 	</nav>
 </header>
+{% if back_url and back_url != request.path%}
 
+<a href="{{ back_url }}" class="button back-button">← Back</a>
+
+{% endif %}
 {% with messages = get_flashed_messages() %}
 {% if messages %}
 
@@ -62,7 +67,9 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
+
 {% block content %}{% endblock %}
+
 <footer class="footer">
 	<h3>WayPointsAndWonders</h3>
 	<br>

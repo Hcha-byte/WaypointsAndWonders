@@ -1,14 +1,15 @@
 from flask import Flask
+from flask_back import Back
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
 from app.models import User
+from .admin.routes import admin
 from .database import db
 
-__version__ = '0.6.0'
+__version__ = '0.7.0'
 
 from dotenv import load_dotenv
-
 from .search import ensure_index
 
 load_dotenv()
@@ -55,6 +56,9 @@ def create_app():
 	login_manager = LoginManager()
 	login_manager.init_app(app)
 	
+	back = Back()
+	back.init_app(app, excluded_endpoints=['admin', 'auth'], default_url='/index', use_referrer=True)
+	print(back)
 	# Register user loader
 	login_manager.user_loader(User.user_loder)
 	login_manager.login_view = "main.login"
