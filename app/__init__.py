@@ -58,7 +58,6 @@ def create_app():
 	
 	back = Back()
 	back.init_app(app, excluded_endpoints=['admin', 'auth'], default_url='/index', use_referrer=True)
-	print(back)
 	# Register user loader
 	login_manager.user_loader(User.user_loder)
 	login_manager.login_view = "main.login"

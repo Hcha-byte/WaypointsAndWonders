@@ -44,7 +44,6 @@ def ensure_index():
 		}
 		
 		client.collections.create(schema)
-		print("Collection created.")
 
 
 def to_ndjson(docs):
