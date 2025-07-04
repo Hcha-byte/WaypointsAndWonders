@@ -5,12 +5,14 @@ from flask import render_template, Response, render_template_string, url_for, re
 from flask_login import current_user
 from sqlalchemy import desc
 
+from app import back
 from app.models import Post
 from . import main_bp  # import the blueprint
 from ..decoraters import login_bot, is_bot
 
 
 @main_bp.route('/')
+@back.exclude
 def welcome():
 	args = request.args.get('testing')
 	
@@ -63,8 +65,8 @@ def sitemap():
 	posts = Post.query.all()
 	for post in posts:
 		urls.append({
-			"loc": f"{base_url}/post/{post.id}",
-			"lastmod": post.date_posted.strftime("%Y-%m-%d"),
+			"loc":      f"{base_url}/post/{post.id}",
+			"lastmod":  post.date_posted.strftime("%Y-%m-%d"),
 			"priority": "0.5"
 		})
 	

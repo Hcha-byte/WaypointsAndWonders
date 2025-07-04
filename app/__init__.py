@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_back import Back
 from flask_login import LoginManager
@@ -14,7 +16,12 @@ from .search import ensure_index
 
 load_dotenv()
 
+back = Back()
 
+
+# for
+#    app.cli.add_command(index_all_command)
+#    app.cli.add_command(search_command)
 # noinspection PyTypeChecker
 def create_app():
 	app = Flask(__name__)
@@ -30,19 +37,19 @@ def create_app():
 	app.config['MAIL_USE_SSL'] = True
 	app.config['MAIL_DEBUG'] = True
 	app.config['MAIL_USERNAME'] = 'contact@waypointsandwonders.com'  # Replace with your email
-	app.config['MAIL_PASSWORD'] = 'ropfy6-sapmyq-bujJer'  # Use an App Password if using Gmail
+	app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASS', '')  # Use an App Password if using Gmail
 	app.config['MAIL_DEFAULT_SENDER'] = 'contact@waypointsandwonders.com'
 	
 	app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 		"pool_pre_ping": True,  # Auto-detect & drop stale connections
-		"pool_recycle": 1800,  # Recycle connections every 30 minutes
-		"pool_size": 5,  # Keep only a few persistent connections
-		"max_overflow": 2,  # Allow a couple of temporary overflow connections
-		"pool_timeout": 15,  # Wait 15s for a connection from the pool
+		"pool_recycle":  1800,  # Recycle connections every 30 minutes
+		"pool_size":     5,  # Keep only a few persistent connections
+		"max_overflow":  2,  # Allow a couple of temporary overflow connections
+		"pool_timeout":  15,  # Wait 15s for a connection from the pool
 	}
 	
-	app.config['GOOGLE_CLIENT_ID'] = '735507344079-1u1080giul9513s8sdhub5dam9vuuu4d.apps.googleusercontent.com'
-	app.config['GOOGLE_CLIENT_SECRET'] = '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'
+	app.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID', '')
+	app.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET', '')
 	# </editor-fold>
 	
 	# <editor-fold desc="db-config">
@@ -56,8 +63,8 @@ def create_app():
 	login_manager = LoginManager()
 	login_manager.init_app(app)
 	
-	back = Back()
-	back.init_app(app, excluded_endpoints=['admin', 'auth'], default_url='/index', use_referrer=True)
+	back.init_app(app, excluded_endpoints=['admin', 'auth'], default_url='/index', use_referrer=True,
+	              home_urls=['/index'])
 	# Register user loader
 	login_manager.user_loader(User.user_loder)
 	login_manager.login_view = "main.login"
