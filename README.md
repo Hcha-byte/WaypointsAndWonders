@@ -55,7 +55,7 @@ their journeys through Markdown-powered posts, beautiful images, and a clean, us
 
 * Python + Flask
 * Jinja2 templates
-* SQLite (or upgrade to PostgreSQL)
+* PostgreSQL
 * Cloudinary (media hosting)
 * Typesense (search engine)
 * Railway (hosting)
