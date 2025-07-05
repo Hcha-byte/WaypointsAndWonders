@@ -84,7 +84,7 @@ def signup():
 		# Verify reCAPTCHA with Google
 		verify_url = 'https://www.google.com/recaptcha/api/siteverify'
 		data = {
-			'secret':   "6LeELi0rAAAAAGzlWRuwMylF7CFw9Pr5yl94JNo5",
+			'secret':   current_app.config['RECAPTCHA_SECRET_KEY'],
 			'response': recaptcha_response,
 			'remoteip': request.remote_addr
 		}
