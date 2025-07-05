@@ -3,22 +3,23 @@ import json
 from flask import Blueprint
 from typesense.exceptions import ObjectNotFound
 
-from .config import TOSHI_URL, AUTH, COLLECTION_NAME
-from ..extensions import client
+from .config import COLLECTION_NAME
+from ..extensions import get_typesense_client
 
 search_bp = Blueprint("search", __name__)
 
 
 def ensure_index():
 	# Check if collection exists
+	client = get_typesense_client()
 	try:
 		client.collections[COLLECTION_NAME].retrieve()
 		print("Collection already exists.")
 	except ObjectNotFound:
 		# Only create if not exists
 		schema = {
-			"name": COLLECTION_NAME,
-			"fields": [
+			"name":                  COLLECTION_NAME,
+			"fields":                [
 				{
 					"name": "title",
 					"type": "string"

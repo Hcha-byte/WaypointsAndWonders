@@ -1,5 +1,9 @@
-import os
+from dotenv import load_dotenv
 
+from .extensions import init_extensions
+
+print(load_dotenv())
+# Loads .env in current working directory by default
 from flask import Flask
 from flask_back import Back
 from flask_login import LoginManager
@@ -11,17 +15,11 @@ from .database import db
 
 __version__ = '0.7.0'
 
-from dotenv import load_dotenv
 from .search import ensure_index
-
-load_dotenv()
 
 back = Back()
 
 
-# for
-#    app.cli.add_command(index_all_command)
-#    app.cli.add_command(search_command)
 # noinspection PyTypeChecker
 def create_app():
 	app = Flask(__name__)
@@ -37,7 +35,7 @@ def create_app():
 	app.config['MAIL_USE_SSL'] = True
 	app.config['MAIL_DEBUG'] = True
 	app.config['MAIL_USERNAME'] = 'contact@waypointsandwonders.com'  # Replace with your email
-	app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASS', '')  # Use an App Password if using Gmail
+	app.config['MAIL_PASSWORD'] = app.config.get('MAIL_PASS', '')  # Use an App Password if using Gmail
 	app.config['MAIL_DEFAULT_SENDER'] = 'contact@waypointsandwonders.com'
 	
 	app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
@@ -48,9 +46,10 @@ def create_app():
 		"pool_timeout":  15,  # Wait 15s for a connection from the pool
 	}
 	
-	app.config['GOOGLE_CLIENT_ID'] = os.getenv('GOOGLE_CLIENT_ID', '')
-	app.config['GOOGLE_CLIENT_SECRET'] = os.getenv('GOOGLE_CLIENT_SECRET', '')
+	app.config['GOOGLE_CLIENT_ID'] = app.config.get('GOOGLE_CLIENT_ID', '')
+	app.config['GOOGLE_CLIENT_SECRET'] = app.config.get('GOOGLE_CLIENT_SECRET', '')
 	# </editor-fold>
+	init_extensions(app)
 	
 	# <editor-fold desc="db-config">
 	# Initialize database
@@ -69,12 +68,6 @@ def create_app():
 	login_manager.user_loader(User.user_loder)
 	login_manager.login_view = "main.login"
 	# </editor-fold>
-	
-	# <editor-fold desc="misc-config">
-	# Import and initialize extensions
-	from .extensions import mail, oauth
-	mail.init_app(app)
-	oauth.init_app(app)
 	
 	# Import each blueprint
 	from app.main import main_bp

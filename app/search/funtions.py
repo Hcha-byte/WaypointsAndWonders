@@ -1,13 +1,14 @@
-from app.extensions import client
+from app.extensions import get_typesense_client
 from app.models import Post
 from app.search import to_ndjson
 
 
 def search_posts(query, location_filter=None, sort_by_date_desc=True, per_page=20):
+	client = get_typesense_client()
 	search_parameters = {
-		"q": query,
+		"q":        query,
 		"query_by": "title,content,location_name",
-		"sort_by": "date_posted:desc" if sort_by_date_desc else "date_posted:asc",
+		"sort_by":  "date_posted:desc" if sort_by_date_desc else "date_posted:asc",
 		"per_page": per_page
 	}
 	if location_filter:
@@ -30,11 +31,12 @@ def search_posts(query, location_filter=None, sort_by_date_desc=True, per_page=2
 
 
 def index_post(post):
+	client = get_typesense_client()
 	document = {
-		"id": int(post.id),
-		"title": post.title,
-		"content": post.content,
-		"date_posted": int(post.date_posted.timestamp()),  # or post.date_posted if already int
+		"id":            int(post.id),
+		"title":         post.title,
+		"content":       post.content,
+		"date_posted":   int(post.date_posted.timestamp()),  # or post.date_posted if already int
 		"location_name": post.location_name
 	}
 	
@@ -46,15 +48,16 @@ def index_post(post):
 
 
 def bulk_index_posts():
+	client = get_typesense_client()
 	posts = Post.query.all()
 	
 	documents = []
 	for post in posts:
 		documents.append({
-			"id": str(post.id),
-			"title": post.title,
-			"content": post.content,
-			"date_posted": int(post.date_posted.timestamp()),
+			"id":            str(post.id),
+			"title":         post.title,
+			"content":       post.content,
+			"date_posted":   int(post.date_posted.timestamp()),
 			"location_name": post.location_name
 		})
 	response = None

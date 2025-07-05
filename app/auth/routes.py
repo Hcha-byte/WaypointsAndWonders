@@ -1,16 +1,13 @@
-import os
-
 import requests
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
-from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
+
+from app.database import db
 from app.extensions import mail, google
 from app.models import User
-from app.database import db
 from . import auth_bp
-
-s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY", "you_will_never_guess"))
+from ..extensions import serializer
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -78,16 +75,16 @@ def signup():
 		return redirect(url_for('main.home'))
 	
 	if request.method == 'POST':
-
+		
 		# ✅ reCAPTCHA validation
 		recaptcha_response = request.form.get('g-recaptcha-response')
 		if not recaptcha_response:
 			flash('Please complete the reCAPTCHA challenge.', 'danger')
 			return redirect(url_for('auth.signup'))
-						# Verify reCAPTCHA with Google
+		# Verify reCAPTCHA with Google
 		verify_url = 'https://www.google.com/recaptcha/api/siteverify'
 		data = {
-			'secret': "6LeELi0rAAAAAGzlWRuwMylF7CFw9Pr5yl94JNo5",
+			'secret':   "6LeELi0rAAAAAGzlWRuwMylF7CFw9Pr5yl94JNo5",
 			'response': recaptcha_response,
 			'remoteip': request.remote_addr
 		}
@@ -141,7 +138,7 @@ def password_reset():
 		if user:
 			
 			# Generate a secure token
-			token = s.dumps(email, salt='password-reset-salt')
+			token = serializer.dumps(email, salt='password-reset-salt')
 			
 			# Create a reset link
 			reset_url = url_for('auth.password_reset_token', token=token, _external=True)
@@ -167,7 +164,7 @@ def password_reset():
 @auth_bp.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset_token(token):
 	try:
-		email = s.loads(token, salt='password-reset-salt', max_age=3600)  # Token expires in 1 hour
+		email = serializer.loads(token, salt='password-reset-salt', max_age=3600)  # Token expires in 1 hour
 	except:
 		flash('Invalid or expired token.', 'danger')
 		return redirect(url_for('auth.password_reset'))

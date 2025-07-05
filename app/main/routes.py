@@ -1,5 +1,4 @@
 import datetime
-import os
 
 from flask import render_template, Response, render_template_string, url_for, redirect, request
 from flask_login import current_user
@@ -101,10 +100,6 @@ Allow: {url_for('main.home')}
 Sitemap: https://waypointsandwonders.com/sitemap.xml
 """
 	return Response(content, mimetype='text/plain')
-
-
-MEILI_URL = os.getenv("MEILI_URL", "http://meilisearch:7700")
-MEILI_API_KEY = os.getenv("MEILI_API_KEY")
 
 
 @main_bp.route('/terms_and_privacy')

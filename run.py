@@ -19,8 +19,8 @@ def page_not_found(e):
 
 
 csp = {
-	'default-src': ["'self'"],
-	'img-src': [
+	'default-src':     ["'self'"],
+	'img-src':         [
 		"'self'",
 		"data:",
 		"https://res.cloudinary.com",
@@ -29,7 +29,7 @@ csp = {
 		"https://lh3.googleusercontent.com",
 		"https://cdn.jsdelivr.net"
 	],
-	'script-src': [
+	'script-src':      [
 		"'self'",
 		"'unsafe-inline'",  # ✅ Required for Lightbox2 to work
 		"https://cdn.jsdelivr.net",
@@ -41,7 +41,7 @@ csp = {
 		"https://cdn.jsdelivr.net",
 		"https://code.jquery.com"
 	],
-	'style-src': [
+	'style-src':       [
 		"'self'",
 		"'unsafe-inline'",  # ✅ Required for Lightbox2 CSS
 		"https://cdn.jsdelivr.net"
@@ -99,7 +99,7 @@ def forbidden(e):
 @app.shell_context_processor
 def make_shell_context():
 	return {
-		'db': db,
+		'db':   db,
 		'User': User,
 		'Post': Post
 	}
