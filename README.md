@@ -1,11 +1,11 @@
-# Waypoints and Wonders 🌍✨
-
-**Waypoints and Wonders** is a Flask-based blog platform designed for travelers, storytellers, and wanderers to share
-their journeys through Markdown-powered posts, beautiful images, and a clean, user-friendly interface.
-
 ![Built with Flask](https://img.shields.io/badge/Built%20with-Flask-000?logo=flask)
 ![Deployed on Railway](https://img.shields.io/badge/Deployed%20on-Railway-5528FF?logo=railway)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
+![Last Commit](https://img.shields.io/github/last-commit/Hcha-byte/WaypointsAndWonders)
+![Issues](https://img.shields.io/github/issues/Hcha-byte/WaypointsAndWonders)
+
+**Waypoints and Wonders** is a Flask-based blog platform designed for travelers, storytellers, and wanderers to share
+their journeys through Markdown-powered posts, beautiful images, and a clean, user-friendly interface.
 
 ## ✨ Features
 
@@ -64,21 +64,21 @@ their journeys through Markdown-powered posts, beautiful images, and a clean, us
 
 ```
 WaypointsAndWonders/
-├── .venv/                  # Local virtual environment (not committed to git)
-├── app/                   # Main Flask application package
-│   ├── admin/             # Admin-related views and logic
-│   ├── auth/              # Authentication (login, signup, Google OAuth)
-│   ├── main/              # Home and general routes
-│   ├── posts/             # Blog post viewing
-│   ├── search/            # Search routes and logic (uses Typesense)
-│   ├── static/            # Static files (CSS, images)
-│   │   ├── css/           # Stylesheets
-│   │   └── images/        # Static image assets
-│   ├── templates/         # Jinja2 templates
-│   │   ├── admin/         # Admin dashboard templates
-│   │   ├── email/         # Email-related templates (e.g. confirmation)
-│   │   ├── password/      # Password reset/change templates
-│   │   └── terms_and_privacy/  # Legal info templates
+├── .venv/                       # Local virtual environment (not committed to git)
+├── app/                         # Main Flask application package
+│   ├── admin/                   # Admin-related views and logic
+│   ├── auth/                    # Authentication (login, signup, Google OAuth)
+│   ├── main/                    # Home and general routes
+│   ├── posts/                   # Blog post viewing
+│   ├── search/                  # Search routes and logic (uses Typesense)
+│   ├── static/                  # Static files (CSS, images)
+│   │   ├── css/                 # Stylesheets
+│   │   └── images/              # Static image assets
+│   ├── templates/               # Jinja2 templates
+│   │   ├── admin/               # Admin dashboard templates
+│   │   ├── email/               # Email-related templates (e.g. confirmation)
+│   │   ├── password/            # Password reset/change templates
+│   │   └── terms_and_privacy/   # Legal info templates
 │   │   # etc.
 │   ├── __init__.py        # App factory function
 │   ├── cli.py             # Custom CLI commands (e.g. database seed)
@@ -96,13 +96,13 @@ WaypointsAndWonders/
 ├── Procfile               # For deployment on platforms like Railway
 ├── README.md              # Project overview and instructions
 ├── requirements.txt       # Python package dependencies
-└──  run.py                 # Entrypoint for running the app
+└──  run.py                # Entrypoint for running the app
 
 ```
 
 ## 🧑‍💻 Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Please follow best practices for contributing to this project.
 
 ## 📝 License
 

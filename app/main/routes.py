@@ -1,6 +1,6 @@
 import datetime
 
-from flask import render_template, Response, render_template_string, url_for, redirect, request
+from flask import render_template, Response, render_template_string, url_for, redirect, request, send_from_directory
 from flask_login import current_user
 from sqlalchemy import desc
 
@@ -109,4 +109,4 @@ def terms_and_privacy():
 
 @main_bp.route('/favicon.ico')
 def favicon():
-	return redirect(url_for('static', code=301, filename='images/favicon.ico'))
+	return send_from_directory('static/images', 'favicon.ico')

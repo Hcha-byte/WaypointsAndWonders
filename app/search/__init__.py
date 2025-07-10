@@ -14,7 +14,6 @@ def ensure_index():
 	client = get_typesense_client()
 	try:
 		client.collections[COLLECTION_NAME].retrieve()
-		print("Collection already exists.")
 	except ObjectNotFound:
 		# Only create if not exists
 		schema = {

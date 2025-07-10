@@ -2,12 +2,13 @@ from dotenv import load_dotenv
 
 from .extensions import init_extensions
 
-print(load_dotenv())
+load_dotenv()
 # Loads .env in current working directory by default
 from flask import Flask
 from flask_back import Back
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from .security.middleware import register_request_guards
 
 from app.models import User
 from .admin.routes import admin
@@ -50,7 +51,7 @@ def create_app():
 	app.config['GOOGLE_CLIENT_SECRET'] = app.config.get('GOOGLE_CLIENT_SECRET', '')
 	# </editor-fold>
 	init_extensions(app)
-	
+	register_request_guards(app)
 	# <editor-fold desc="db-config">
 	# Initialize database
 	db.init_app(app)
@@ -63,7 +64,7 @@ def create_app():
 	login_manager.init_app(app)
 	
 	back.init_app(app, excluded_endpoints=['admin', 'auth'], default_url='/index', use_referrer=True,
-	              home_urls=['/index'])
+	              home_urls=['/index', '/', '/search'])
 	# Register user loader
 	login_manager.user_loader(User.user_loder)
 	login_manager.login_view = "main.login"
@@ -75,6 +76,7 @@ def create_app():
 	from app.admin import admin_bp
 	from app.auth import auth_bp
 	from app.search import search_bp
+	from app.security.honeypot import honeypot_bp
 	
 	# Register Blueprints (for routes)
 	app.register_blueprint(main_bp)
@@ -82,6 +84,7 @@ def create_app():
 	app.register_blueprint(posts_bp, url_prefix='/post')  # posts at /post/<id>
 	app.register_blueprint(admin_bp, url_prefix='/admin')
 	app.register_blueprint(auth_bp, url_prefix='/auth')
+	app.register_blueprint(honeypot_bp)
 	
 	from app.cli import index_all_command, search_command
 	app.cli.add_command(index_all_command)
