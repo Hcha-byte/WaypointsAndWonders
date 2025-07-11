@@ -93,6 +93,13 @@ Disallow: {url_for('auth.password_reset')}
 Disallow: {url_for('auth.password_reset_token', token='')}
 Disallow: {url_for('auth.authorize_google')}
 
+# Trick bad dot to visit honeypot
+Disallow: {url_for('honeypot.fake_login')}
+Disallow: {url_for('honeypot.fake_db_backup')}
+Disallow: {url_for('honeypot.fake_env')}
+Disallow: {url_for('honeypot.fake_php')}
+Disallow: {url_for('honeypot.fake_wordpress')}
+
 Allow: {url_for('main.welcome')}
 Allow: {url_for('main.home')}
 

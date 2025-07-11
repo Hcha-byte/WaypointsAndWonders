@@ -1,3 +1,5 @@
+![Waypoints and Wonders logo](app/static/images/Waypoints%20and%20Wonders/fulllogo_transparent.png)
+
 ![Built with Flask](https://img.shields.io/badge/Built%20with-Flask-000?logo=flask)
 ![Deployed on Railway](https://img.shields.io/badge/Deployed%20on-Railway-5528FF?logo=railway)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
@@ -96,7 +98,7 @@ WaypointsAndWonders/
 ├── Procfile               # For deployment on platforms like Railway
 ├── README.md              # Project overview and instructions
 ├── requirements.txt       # Python package dependencies
-└──  run.py                # Entrypoint for running the app
+└── run.py                 # Entrypoint for running the app
 
 ```
 

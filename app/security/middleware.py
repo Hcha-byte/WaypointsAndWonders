@@ -1,4 +1,7 @@
-from flask import redirect, abort, request, current_app
+import os.path
+from datetime import datetime, timezone
+
+from flask import redirect, abort, request, Flask
 from flask_talisman import Talisman
 
 from app.security.ip_blocklist import get_real_ip, is_ip_blacklisted
@@ -44,8 +47,19 @@ known_bad_bots = [
 	"perl", "scrapy", "nmap", "masscan"
 ]
 
+LOG_FILE = os.path.join("data", "middleware.log")
 
-def register_request_guards(app):
+
+def write_to_log(message: str):
+	timestamp = datetime.now(timezone.utc).isoformat()
+	line = f"[{timestamp}] {message}\n"
+	
+	os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+	with open(LOG_FILE, "a") as f:
+		f.write(line)
+
+
+def register_request_guards(app: Flask):
 	Talisman(app, force_https=True, content_security_policy=csp)
 	
 	@app.before_request
@@ -57,19 +71,30 @@ def register_request_guards(app):
 			url = request.url.replace("http://", "https://", 1)
 			return redirect(url, code=301)
 		
+		# Enforce IP blocklist
 		if is_ip_blacklisted(ip):
-			current_app.logger.warning(f"[BLOCKED] IP {ip} is in blacklist.txt")
+			write_to_log(
+				f"Blocked IP: {ip} | PATH: {request.path} | UA: {request.headers.get('User-Agent', 'unknown').lower()}| Reason: IP blacklisted")
 			abort(410)
 		
+		# Allow access to honeypot
+		if request.endpoint and "honeypot" in request.endpoint:
+			return None
+		
+		# Enforce bot detection
 		user_agent = request.headers.get('User-Agent', '').lower()
 		path = request.path
 		
 		if path not in ["/static/images/favicon.ico", "/static/css/styles.css"]:
 			if not user_agent or user_agent.strip() == "":
+				write_to_log(f"Blocked IP: {ip} | PATH: {path} | UA: {user_agent}| Reason: empty user agent")
 				abort(403)
 			
 			if any(bad in path.lower() for bad in BLOCKED_PATHS):
+				write_to_log(f"Blocked IP: {ip} | PATH: {path} | UA: {user_agent}| Reason: blocked path")
 				abort(403)
 			
 			if any(bad in user_agent for bad in known_bad_bots):
+				write_to_log(f"Blocked IP: {ip} | PATH: {path} | UA: {user_agent}| Reason: known bad bot UA")
 				abort(403)
+		return None
