@@ -196,12 +196,13 @@ def fake_db_backup():
 @honeypot_bp.route("/.env")
 def fake_env():
 	log_trap_hit(".env")
-	fake_env_content = """
-	SECRET_KEY=abc123fake
-	DB_PASSWORD=notarealpassword
-	AWS_SECRET_KEY=EXAMPLEKEY123
-	SENDGRID_API_KEY=SG.fakeapikey
-	"""
+	fake_env_content = \
+		"""
+		SECRET_KEY=abc123fake
+		DB_PASSWORD=notarealpassword
+		AWS_SECRET_KEY=EXAMPLEKEY123
+		SENDGRID_API_KEY=SG.fakeapikey
+		"""
 	return fake_env_content.strip(), 200, {'Content-Type': 'text/plain'}
 
 

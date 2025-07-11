@@ -65,16 +65,22 @@ def register_request_guards(app: Flask):
 	@app.before_request
 	def master_guardian():
 		ip = get_real_ip()
+		user_agent = request.headers.get('User-Agent', '').lower()
+		path = request.path
 		
 		# Enforce HTTPS
 		if not request.is_secure:
 			url = request.url.replace("http://", "https://", 1)
 			return redirect(url, code=301)
 		
+		# ✅ Allow static files (and favicon) to always load
+		if path.startswith("/static/") or path == "/favicon.ico":
+			return None  # Let it through without any security checks
+		
 		# Enforce IP blocklist
 		if is_ip_blacklisted(ip):
 			write_to_log(
-				f"Blocked IP: {ip} | PATH: {request.path} | UA: {request.headers.get('User-Agent', 'unknown').lower()}| Reason: IP blacklisted")
+				f"Blocked IP: {ip} | PATH: {path} | UA: {user_agent}| Reason: IP blacklisted")
 			abort(410)
 		
 		# Allow access to honeypot
@@ -82,8 +88,6 @@ def register_request_guards(app: Flask):
 			return None
 		
 		# Enforce bot detection
-		user_agent = request.headers.get('User-Agent', '').lower()
-		path = request.path
 		
 		if path not in ["/static/images/favicon.ico", "/static/css/styles.css"]:
 			if not user_agent or user_agent.strip() == "":
