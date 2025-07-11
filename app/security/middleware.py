@@ -27,12 +27,20 @@ csp = {
 		"'self'",
 		"'unsafe-inline'",  # ✅ Required for Lightbox2 to work
 		"https://cdn.jsdelivr.net",
-		"https://code.jquery.com"
+		"https://code.jquery.com",
+		# ✅ Required for reCAPTCHA
+		"https://www.google.com/recaptcha/api.js",
+		"https://www.gstatic.com/recaptcha/releases/_cn5mBoBXIA0_T7xBjxkUqUA/recaptcha__en.js"
 	],
 	'style-src':       [
 		"'self'",
 		"'unsafe-inline'",  # ✅ Required for Lightbox2 CSS
 		"https://cdn.jsdelivr.net"
+	],
+	# ✅ Required for reCAPTCHA
+	'frame-src':       [
+		"'self'",
+		"https://www.google.com"
 	]
 }
 
