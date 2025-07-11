@@ -41,6 +41,10 @@ csp = {
 	'frame-src':       [
 		"'self'",
 		"https://www.google.com"
+	],
+	'connect-src':     [
+		"'self'",
+		"https://www.google.com/recaptcha/api2/clr?k=6LeELi0rAAAAAKkQYoemqlO8nG2jlp5XJKGJc4zM"
 	]
 }
 

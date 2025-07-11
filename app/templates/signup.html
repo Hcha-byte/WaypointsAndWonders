@@ -4,27 +4,28 @@
 {% block content %}
 <h1 class="content">Sign Up</h1>
 
-<form action="{{ url_for('auth.signup') }}" method="POST" class="form">
-    <div>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username">
-    </div>
-    <div>
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
-    </div>
-     <div>
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password">
-    </div>
-    <div>
-        <label for="confirm_password">Confirm Password</label>
-        <input type="password" id="confirm_password" name="confirm_password">
-    </div>
+<form action="{{ url_for('auth.signup') }}" method="POST" class="form" autocomplete="on">
+	<div>
+		<label for="username">Username</label>
+		<input type="text" id="username" name="username" autocomplete="username" required>
+	</div>
+	<div>
+		<label for="email">Email</label>
+		<input type="email" id="email" name="email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+		       autocomplete="email" required>
+	</div>
+	<div>
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password" autocomplete="new-password" required>
+	</div>
+	<div>
+		<label for="confirm_password">Confirm Password</label>
+		<input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password" required>
+	</div>
 	<!-- reCAPTCHA widget -->
 	<div class="g-recaptcha" data-sitekey="6LeELi0rAAAAAKkQYoemqlO8nG2jlp5XJKGJc4zM"></div>
 	<br>
-	   <button type="submit" class="button">Sign Up</button>
+	<button type="submit" class="button">Sign Up</button>
 </form>
 
 <!-- Load reCAPTCHA script -->
