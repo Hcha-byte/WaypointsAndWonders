@@ -30,10 +30,11 @@ MIDDLEWARE_LOG = "data/middleware.log"
 
 
 def ensure_log_files():
-	os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
-	os.makedirs(os.path.dirname(BLACKLIST_FILE), exist_ok=True)
-	os.makedirs(os.path.dirname(HONEYPOT_LOG), exist_ok=True)
-	os.makedirs(os.path.dirname(MIDDLEWARE_LOG), exist_ok=True)
+	for path in [LOG_FILE, BLACKLIST_FILE, HONEYPOT_LOG, MIDDLEWARE_LOG]:
+		os.makedirs(os.path.dirname(path), exist_ok=True)
+		if not os.path.exists(path):
+			with open(path, "w") as f:
+				f.write("")
 
 
 """
