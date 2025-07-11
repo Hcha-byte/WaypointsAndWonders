@@ -9,6 +9,7 @@ from flask_back import Back
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from .security.middleware import register_request_guards
+from .security.honeypot import ensure_log_files
 
 from app.models import User
 from .admin.routes import admin
@@ -50,15 +51,20 @@ def create_app():
 	app.config['GOOGLE_CLIENT_ID'] = app.config.get('GOOGLE_CLIENT_ID', '')
 	app.config['GOOGLE_CLIENT_SECRET'] = app.config.get('GOOGLE_CLIENT_SECRET', '')
 	# </editor-fold>
+	
+	# <editor-fold desc="funtions calls">
 	init_extensions(app)
 	register_request_guards(app)
+	ensure_log_files()
+	# </editor-fold>
+	
 	# <editor-fold desc="db-config">
 	# Initialize database
 	db.init_app(app)
 	migrate = Migrate(app, db)
 	# </editor-fold>
 	
-	# <editor-fold desc="login-config">
+	# <editor-fold desc="extensions init">
 	# Initialize login
 	login_manager = LoginManager()
 	login_manager.init_app(app)
@@ -70,6 +76,7 @@ def create_app():
 	login_manager.login_view = "main.login"
 	# </editor-fold>
 	
+	# <editor-fold desc="blueprints init">
 	# Import each blueprint
 	from app.main import main_bp
 	from app.posts import posts_bp
@@ -89,6 +96,7 @@ def create_app():
 	from app.cli import index_all_command, search_command
 	app.cli.add_command(index_all_command)
 	app.cli.add_command(search_command)
+	# </editor-fold>
 	
 	ensure_index()
 	

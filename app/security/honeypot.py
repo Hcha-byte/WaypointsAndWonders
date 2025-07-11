@@ -24,9 +24,45 @@ def maybe_delay():
 
 
 # === Constants ===
-BLACKLIST_FILE = "data/ip_blacklist.txt"
+BLACKLIST_FILE = "data/blacklist.txt"
 HONEYPOT_LOG = "data/honeypot.log"
 MIDDLEWARE_LOG = "data/middleware.log"
+
+
+def ensure_log_files():
+	os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+	os.makedirs(os.path.dirname(BLACKLIST_FILE), exist_ok=True)
+	os.makedirs(os.path.dirname(HONEYPOT_LOG), exist_ok=True)
+	os.makedirs(os.path.dirname(MIDDLEWARE_LOG), exist_ok=True)
+
+
+"""
+ADMIN_ROUTES = [
+	"/_blacklist",
+	"/_reset_blacklist",
+	"/_honeypot_log",
+	"/_clear_honeypot_log",
+	"/_middleware_log",
+	"/_clear_middleware_log",
+	"_ip"
+]
+"""
+"""
+HONEYPOT_ROUTES = [
+	"/filemanager.php",
+	"/admin.php",
+	"/shell.php",
+	"/database_backup.sql",
+	"/.env",
+	"/posts.php",
+	"/config.php",
+	"/wp-login.php",
+	"/wp-content",
+	"/wp-admin",
+	"/wp-includes",
+	"/wp-mail"
+]
+"""
 
 
 # === Utilities ===
