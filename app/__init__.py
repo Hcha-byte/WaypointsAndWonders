@@ -73,7 +73,7 @@ def create_app():
 	              home_urls=['/index', '/', '/search'])
 	# Register user loader
 	login_manager.user_loader(User.user_loder)
-	login_manager.login_view = "main.login"
+	login_manager.login_view = "auth.login"
 	# </editor-fold>
 	
 	# <editor-fold desc="blueprints init">
@@ -84,6 +84,7 @@ def create_app():
 	from app.auth import auth_bp
 	from app.search import search_bp
 	from app.security.honeypot import honeypot_bp
+	from app.security.log_viewer import log_viewer_bp
 	
 	# Register Blueprints (for routes)
 	app.register_blueprint(main_bp)
@@ -92,6 +93,7 @@ def create_app():
 	app.register_blueprint(admin_bp, url_prefix='/admin')
 	app.register_blueprint(auth_bp, url_prefix='/auth')
 	app.register_blueprint(honeypot_bp)
+	app.register_blueprint(log_viewer_bp, url_prefix='/log')
 	
 	from app.cli import index_all_command, search_command
 	app.cli.add_command(index_all_command)

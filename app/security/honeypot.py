@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import time
@@ -6,9 +7,6 @@ from datetime import datetime, timezone
 from flask import Blueprint, request, render_template_string
 
 from .ip_blocklist import save_ip_to_blacklist, get_real_ip
-from ..decoraters import admin_required
-
-LOG_FILE = os.path.join("data", "honeypot.log")
 
 honeypot_bp = Blueprint("honeypot", __name__)
 
@@ -24,17 +22,23 @@ def maybe_delay():
 
 
 # === Constants ===
-BLACKLIST_FILE = "data/blacklist.txt"
+BLACKLIST_FILE = "data/blacklist.json"
 HONEYPOT_LOG = "data/honeypot.log"
 MIDDLEWARE_LOG = "data/middleware.log"
 
 
 def ensure_log_files():
-	for path in [LOG_FILE, BLACKLIST_FILE, HONEYPOT_LOG, MIDDLEWARE_LOG]:
+	for path in [HONEYPOT_LOG, MIDDLEWARE_LOG]:
 		os.makedirs(os.path.dirname(path), exist_ok=True)
 		if not os.path.exists(path):
 			with open(path, "w") as f:
 				f.write("")
+	
+	# If the file doesn't exist, create it with an empty list
+	if not os.path.exists(BLACKLIST_FILE):
+		with open(BLACKLIST_FILE, "w+") as f:
+			json.dump({"blacklisted_ips": []}, f, indent=2)
+			print(f.read())
 
 
 """
@@ -66,83 +70,13 @@ HONEYPOT_ROUTES = [
 """
 
 
-# === Utilities ===
-def read_log(path):
-	with open(path, "r") as f:
-		return f.read().strip().splitlines()
-
-
-def clear_file(path):
-	with open(path, "w") as f:
-		f.write("")
-
-
-# === Routes ===
-
-@honeypot_bp.route("/_blacklist")
-@admin_required
-def view_trap_hits():
-	return {"blacklisted_ips": read_log(BLACKLIST_FILE)}
-
-
-@honeypot_bp.route("/_reset_blacklist")
-@admin_required
-def reset_trap_hits():
-	clear_file(BLACKLIST_FILE)
-	return {
-		"blacklisted_ips": [],
-		"success":         True
-	}
-
-
-@honeypot_bp.route("/_honeypot_log")
-@admin_required
-def view_honeypot_log():
-	return {"log": read_log(HONEYPOT_LOG)}
-
-
-@honeypot_bp.route("/_clear_honeypot_log")
-@admin_required
-def clear_honeypot_log():
-	clear_file(HONEYPOT_LOG)
-	return {
-		"log":     [],
-		"success": True
-	}
-
-
-@honeypot_bp.route("/_middleware_log")
-@admin_required
-def view_middleware_log():
-	return {"log": read_log(MIDDLEWARE_LOG)}
-
-
-@honeypot_bp.route("/_clear_middleware_log")
-@admin_required
-def clear_middleware_log():
-	clear_file(MIDDLEWARE_LOG)
-	return {
-		"log":     [],
-		"success": True
-	}
-
-
-@honeypot_bp.route("/_ip")
-@admin_required
-def show_ip():
-	return {
-		"real_ip":     get_real_ip(),
-		"remote_addr": request.remote_addr
-	}
-
-
 # Log a trap hit to file
 def log_trap_hit_to_file(ip: str, path: str, user_agent: str, tag: str = "Honeypot"):
 	timestamp = datetime.now(timezone.utc).isoformat()
 	line = f"[{timestamp}][CATEGORY: {tag}] IP: {ip} | PATH: {path} | UA: {user_agent}\n"
 	
-	os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
-	with open(LOG_FILE, "a") as f:
+	os.makedirs(os.path.dirname(HONEYPOT_LOG), exist_ok=True)
+	with open(HONEYPOT_LOG, "a") as f:
 		f.write(line)
 
 
@@ -150,9 +84,9 @@ def log_trap_hit_to_file(ip: str, path: str, user_agent: str, tag: str = "Honeyp
 def log_trap_hit(tag):
 	maybe_delay()
 	ip = get_real_ip()
-	save_ip_to_blacklist(ip)
 	user_agent = request.headers.get('User-Agent', 'unknown')
 	path = request.path
+	save_ip_to_blacklist(ip=ip, reason="Honeypot hit| " + tag, location=path, user_agent=user_agent)
 	log_trap_hit_to_file(ip, path, user_agent, tag)
 
 

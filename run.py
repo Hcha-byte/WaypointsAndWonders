@@ -30,6 +30,12 @@ def blacklisted(e):
 	                       message='Your IP has been blacklisted, please appel to an admin for more information.'), 410
 
 
+@app.errorhandler(500)
+def internal_server_error(e):
+	return render_template('error.html', title='500', functionality="There was an internal server error",
+	                       message=e), 500
+
+
 @app.shell_context_processor
 def make_shell_context():
 	return {
