@@ -3,7 +3,7 @@ import json
 from flask import Blueprint
 
 from .config import HONEYPOT_LOG, MIDDLEWARE_LOG, BLACKLIST_FILE
-from .ip_blocklist import get_real_ip, get_ip_geo
+from .ip_blocklist import get_real_ip, get_ip_info
 from ..decoraters import admin_required
 
 log_viewer_bp = Blueprint("log_viewer", __name__)
@@ -80,7 +80,7 @@ def clear_middleware_log():
 @admin_required
 def show_ip():
 	ip = get_real_ip()
-	geo = get_ip_geo(ip)
+	geo = get_ip_info(ip)
 	city = geo.get("city", "unknown")
 	country = geo.get("country", "unknown")
 	return {

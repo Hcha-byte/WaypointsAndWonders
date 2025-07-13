@@ -12,15 +12,24 @@ os.makedirs(os.path.dirname(BLACKLIST_FILE), exist_ok=True)
 import requests
 
 
-def get_ip_geo(ip):
+def get_ip_info(ip):
 	response = requests.get(f"https://ipwho.is/{ip}")
 	if response.ok:
 		data = response.json()
 		return {
-			"country": data.get("country", "unknown"),
-			"city":    data.get("city", "unknown")
+			"country":  data.get("country", "unknown"),
+			"city":     data.get("city", "unknown"),
+			"asn":      data.get("asn", {}).get("name", "unknown"),
+			"isp":      data.get("connection", {}).get("isp", "unknown"),
+			"hostname": data.get("connection", {}).get("hostname", "unknown")
 		}
-	return {"country": "unknown", "city": "unknown"}
+	return {
+		"country":  "unknown",
+		"city":     "unknown",
+		"asn":      "unknown",
+		"isp":      "unknown",
+		"hostname": "unknown"
+	}
 
 
 def load_blacklist():
@@ -53,15 +62,18 @@ def save_ip_to_blacklist(ip: str, reason="unknown", location="unknown", user_age
 	blacklist = data.get("blacklisted_ips", {})
 	
 	if ip not in blacklist:
-		geo = get_ip_geo(ip)
+		ip_info = get_ip_info(ip)
 		
 		blacklist[ip] = {
 			"reason":     reason,
 			"location":   location,
 			"user_agent": user_agent,
 			"timestamp":  datetime.now(timezone.utc).isoformat() + "Z",
-			"country":    geo["country"],
-			"city":       geo["city"]
+			"country":    ip_info["country"],
+			"city":       ip_info["city"],
+			"asn":        ip_info["asn"],
+			"isp":        ip_info["isp"],
+			"hostname":   ip_info["hostname"]
 		}
 		
 		data["blacklisted_ips"] = blacklist

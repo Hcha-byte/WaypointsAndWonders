@@ -143,17 +143,19 @@ def fake_php():
 	return "<!-- PHP index file placeholder -->", 200
 
 
-# WP trap
-# non-wildcard routes
 @honeypot_bp.route('/wp-content')
 @honeypot_bp.route('/wp-admin')
 @honeypot_bp.route('/wp-includes')
 @honeypot_bp.route('/wp-mail')
-# wildcard routes
+def fake_wordpress_root():
+	log_trap_hit('wordpress')
+	return "<!-- PHP index file placeholder -->", 200
+
+
 @honeypot_bp.route('/wp-content<path:rest>')
 @honeypot_bp.route('/wp-admin<path:rest>')
 @honeypot_bp.route('/wp-includes<path:rest>')
 @honeypot_bp.route('/wp-mail<path:rest>')
-def fake_wordpress():
-	log_trap_hit('wordpress')
-	return "<!-- PHP index file placeholder -->", 200
+def fake_wordpress_wildcard(rest):
+	log_trap_hit('wordpress wildcard')
+	return f"<!-- Fake path: {rest} -->", 200
