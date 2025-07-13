@@ -5,6 +5,7 @@ from flask import redirect, abort, request, Flask
 from flask_talisman import Talisman
 
 from app.security.ip_blocklist import get_real_ip, is_ip_blacklisted
+from .config import MIDDLEWARE_LOG
 
 csp = {
 	'default-src':     ["'self'"],
@@ -65,7 +66,7 @@ def write_to_log(message: str):
 	line = f"[{timestamp}] {message}\n"
 	
 	os.makedirs(os.path.dirname(MIDDLEWARE_LOG), exist_ok=True)
-	with open(LOG_FILE, "a") as f:
+	with open(MIDDLEWARE_LOG, "a") as f:
 		f.write(line)
 
 
