@@ -4,7 +4,7 @@ from datetime import timezone, datetime
 
 from flask import request
 
-BLACKLIST_FILE = os.path.abspath("data/blacklist.json")
+from .config import BLACKLIST_FILE
 
 # Ensure the directory exists
 os.makedirs(os.path.dirname(BLACKLIST_FILE), exist_ok=True)

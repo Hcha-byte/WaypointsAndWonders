@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, request, render_template_string
 
+from .config import MIDDLEWARE_LOG, HONEYPOT_LOG, BLACKLIST_FILE
 from .ip_blocklist import save_ip_to_blacklist, get_real_ip
 
 honeypot_bp = Blueprint("honeypot", __name__)
@@ -21,12 +22,6 @@ def maybe_delay():
 		time.sleep(delay)
 
 
-# === Constants ===
-BLACKLIST_FILE = "data/blacklist.json"
-HONEYPOT_LOG = "data/honeypot.log"
-MIDDLEWARE_LOG = "data/middleware.log"
-
-
 def ensure_log_files():
 	for path in [HONEYPOT_LOG, MIDDLEWARE_LOG]:
 		os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -36,9 +31,8 @@ def ensure_log_files():
 	
 	# If the file doesn't exist, create it with an empty list
 	if not os.path.exists(BLACKLIST_FILE):
-		with open(BLACKLIST_FILE, "w+") as f:
+		with open(BLACKLIST_FILE, "w") as f:
 			json.dump({"blacklisted_ips": []}, f, indent=2)
-			print(f.read())
 
 
 """

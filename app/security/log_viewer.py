@@ -2,13 +2,9 @@ import json
 
 from flask import Blueprint
 
+from .config import HONEYPOT_LOG, MIDDLEWARE_LOG, BLACKLIST_FILE
 from .ip_blocklist import get_real_ip, get_ip_geo
 from ..decoraters import admin_required
-
-# === Constants ===
-BLACKLIST_FILE = "data/blacklist.json"
-HONEYPOT_LOG = "data/honeypot.log"
-MIDDLEWARE_LOG = "data/middleware.log"
 
 log_viewer_bp = Blueprint("log_viewer", __name__)
 
