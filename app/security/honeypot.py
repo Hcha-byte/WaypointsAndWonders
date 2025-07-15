@@ -1,5 +1,4 @@
 import json
-import os
 import random
 import time
 from datetime import datetime, timezone
@@ -24,14 +23,14 @@ def maybe_delay():
 
 def ensure_log_files():
 	for path in [HONEYPOT_LOG, MIDDLEWARE_LOG]:
-		os.makedirs(os.path.dirname(path), exist_ok=True)
-		if not os.path.exists(path):
-			with open(path, "w") as f:
+		path.parent.mkdir(parents=True, exist_ok=True)
+		if not path.exists():
+			with path.open("w") as f:
 				f.write("")
 	
 	# If the file doesn't exist, create it with an empty list
-	if not os.path.exists(BLACKLIST_FILE):
-		with open(BLACKLIST_FILE, "w") as f:
+	if not BLACKLIST_FILE.exists():
+		with BLACKLIST_FILE.open("w") as f:
 			json.dump({"blacklisted_ips": []}, f, indent=2)
 
 
@@ -69,7 +68,7 @@ def log_trap_hit_to_file(ip: str, path: str, user_agent: str, tag: str = "Honeyp
 	timestamp = datetime.now(timezone.utc).isoformat()
 	line = f"[{timestamp}][CATEGORY: {tag}] IP: {ip} | PATH: {path} | UA: {user_agent}\n"
 	
-	os.makedirs(os.path.dirname(HONEYPOT_LOG), exist_ok=True)
+	HONEYPOT_LOG.parent.mkdir(parents=True, exist_ok=True)
 	with open(HONEYPOT_LOG, "a") as f:
 		f.write(line)
 

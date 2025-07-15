@@ -1,5 +1,4 @@
 import json
-import os
 from datetime import timezone, datetime
 
 from flask import request
@@ -7,7 +6,7 @@ from flask import request
 from .config import BLACKLIST_FILE
 
 # Ensure the directory exists
-os.makedirs(os.path.dirname(BLACKLIST_FILE), exist_ok=True)
+BLACKLIST_FILE.parent.mkdir(parents=True, exist_ok=True)
 
 import requests
 
@@ -33,7 +32,7 @@ def get_ip_info(ip):
 
 
 def load_blacklist():
-	if not os.path.exists(BLACKLIST_FILE):
+	if not BLACKLIST_FILE.exists():
 		return {"blacklisted_ips": {}}
 	with open(BLACKLIST_FILE, "r") as f:
 		try:

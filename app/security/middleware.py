@@ -1,4 +1,3 @@
-import os.path
 from datetime import datetime, timezone
 
 from flask import redirect, abort, request, Flask
@@ -65,8 +64,8 @@ def write_to_log(message: str):
 	timestamp = datetime.now(timezone.utc).isoformat()
 	line = f"[{timestamp}] {message}\n"
 	
-	os.makedirs(os.path.dirname(MIDDLEWARE_LOG), exist_ok=True)
-	with open(MIDDLEWARE_LOG, "a") as f:
+	MIDDLEWARE_LOG.parent.mkdir(parents=True, exist_ok=True)
+	with MIDDLEWARE_LOG.open("a") as f:
 		f.write(line)
 
 
