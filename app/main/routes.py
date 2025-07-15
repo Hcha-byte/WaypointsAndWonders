@@ -98,7 +98,7 @@ Disallow: {url_for('honeypot.fake_login')}
 Disallow: {url_for('honeypot.fake_db_backup')}
 Disallow: {url_for('honeypot.fake_env')}
 Disallow: {url_for('honeypot.fake_php')}
-Disallow: {url_for('honeypot.fake_wordpress')}
+Disallow: {url_for('honeypot.fake_wordpress_root')}
 
 Allow: {url_for('main.welcome')}
 Allow: {url_for('main.home')}

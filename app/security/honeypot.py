@@ -80,7 +80,7 @@ def log_trap_hit(tag):
 	ip = get_real_ip()
 	user_agent = request.headers.get('User-Agent', 'unknown')
 	path = request.path
-	save_ip_to_blacklist(ip=ip, reason="Honeypot hit| " + tag, location=path, user_agent=user_agent)
+	save_ip_to_blacklist(ip=ip, reason="Honeypot hit | " + tag, location=path, user_agent=user_agent)
 	log_trap_hit_to_file(ip, path, user_agent, tag)
 
 
