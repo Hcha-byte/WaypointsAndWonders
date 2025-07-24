@@ -1,8 +1,9 @@
 import json
 
-from flask import Blueprint
+import markdown
+from flask import Blueprint, render_template
 
-from .config import HONEYPOT_LOG, MIDDLEWARE_LOG, BLACKLIST_FILE
+from .config import HONEYPOT_LOG, MIDDLEWARE_LOG, BLACKLIST_FILE, SUMMARY_LATEST
 from .ip_blocklist import get_real_ip, get_ip_info
 from ..decoraters import admin_required
 
@@ -21,6 +22,14 @@ def clear_file(path):
 
 
 # === Routes ===
+
+@log_viewer_bp.route("/")
+@admin_required
+def log_index():
+	data = read_log(SUMMARY_LATEST)
+	html = markdown.markdown("\n".join(data), output_format="html")
+	return render_template("log_index.html", title="Log Viewer", html=html)
+
 
 @log_viewer_bp.route("/_blacklist")
 @admin_required

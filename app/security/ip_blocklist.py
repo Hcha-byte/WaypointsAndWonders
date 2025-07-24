@@ -1,5 +1,5 @@
 import json
-from datetime import timezone, datetime
+from datetime import timezone, datetime, timedelta
 
 from flask import request
 
@@ -50,6 +50,33 @@ def load_blacklist():
 			return data
 		except json.JSONDecodeError:
 			return {"blacklisted_ips": {}}
+
+
+from dateutil.parser import isoparse  # Much better ISO parser!
+
+
+def get_recent_blacklist(hours: int = 24):
+	all_data = load_blacklist()
+	recent_data = {"blacklisted_ips": {}}
+	
+	now = datetime.now(timezone.utc)
+	cutoff = now - timedelta(hours=hours)
+	
+	for ip, info in all_data.get("blacklisted_ips", {}).items():
+		timestamp_str = info.get("timestamp")
+		try:
+			# Fix malformed timestamp like "+00:00Z"
+			if timestamp_str.endswith("Z") and "+" in timestamp_str:
+				timestamp_str = timestamp_str.replace("Z", "")  # drop the Z
+			
+			timestamp = isoparse(timestamp_str)
+			if timestamp >= cutoff:
+				recent_data["blacklisted_ips"][ip] = info
+		except Exception as e:
+			print(f"⚠️ Failed to parse timestamp for {ip}: {e}")
+			continue
+	
+	return recent_data
 
 
 def save_ip_to_blacklist(ip: str, reason="unknown", location="unknown", user_agent="unknown") -> None:

@@ -1,9 +1,11 @@
 import json
 from pathlib import Path
 
+from ..config import BLACKLIST_FILE
 
-def load_blacklist(path: str = "data/blacklist.json"):
+
+def load_blacklist(path: Path = BLACKLIST_FILE):
 	if not Path(path).exists():
 		return {}
-	with open(path, "r") as f:
+	with path.open("r") as f:
 		return json.load(f).get("blacklisted_ips", {})

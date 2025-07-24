@@ -48,6 +48,17 @@ def index_post(post):
 
 
 def bulk_index_posts():
+	"""
+	Bulk index all posts in the database.
+	
+	This function fetches all posts from the database, converts them into the
+	Typesense document format, and then uses the Typesense bulk import API
+	to index them all at once. Note that this can take a long time if you have
+	a large number of posts.
+	
+	Returns:
+	    The response from the Typesense API, or None if there was an error.
+	"""
 	client = get_typesense_client()
 	posts = Post.query.all()
 	

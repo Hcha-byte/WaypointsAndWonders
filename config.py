@@ -1,6 +1,10 @@
 import os
 
 
+def is_running_on_railway():
+	return os.environ.get("RAILWAY_PROJECT_NAME", None) is not None
+
+
 class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY', 'you_will_never_guess')
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '')
@@ -14,3 +18,7 @@ class Config:
 	CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "")
 	CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", "")
 	CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "")
+	
+	TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY", "")
+	
+	IS_ON_RAILWAY: bool = is_running_on_railway()

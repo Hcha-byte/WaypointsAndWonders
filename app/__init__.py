@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 
+from app.security.summarizer.scheduler import init_scheduler
 from .extensions import init_extensions
 
 load_dotenv()
@@ -52,10 +53,13 @@ def create_app():
 	app.config['GOOGLE_CLIENT_SECRET'] = app.config.get('GOOGLE_CLIENT_SECRET', '')
 	# </editor-fold>
 	
-	# <editor-fold desc="funtions calls">
+	# <editor-fold desc="functions calls">
 	init_extensions(app)
 	register_request_guards(app)
 	ensure_log_files()
+	from app.cli import register_commands
+	register_commands(app)
+	init_scheduler(app)
 	# </editor-fold>
 	
 	# <editor-fold desc="db-config">
@@ -95,9 +99,6 @@ def create_app():
 	app.register_blueprint(honeypot_bp)
 	app.register_blueprint(log_viewer_bp, url_prefix='/log')
 	
-	from app.cli import index_all_command, search_command
-	app.cli.add_command(index_all_command)
-	app.cli.add_command(search_command)
 	# </editor-fold>
 	
 	ensure_index()
