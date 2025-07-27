@@ -1,3 +1,10 @@
+# run.py
+import builtins
+
+_original_print = builtins.print  # Save original
+# make print flush by default globally
+builtins.print = lambda *args, **kwargs: _original_print(*args, **{**kwargs, "flush": True})
+
 from flask import render_template, request
 from werkzeug.middleware.proxy_fix import ProxyFix
 

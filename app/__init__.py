@@ -18,7 +18,7 @@ from .database import db
 
 __version__ = '0.7.0'
 
-from .search import ensure_index
+from .search import ensure_index_with_retry
 
 back = Back()
 
@@ -101,7 +101,7 @@ def create_app():
 	
 	# </editor-fold>
 	
-	ensure_index()
+	ensure_index_with_retry()
 	
 	return app
 # </editor-fold>

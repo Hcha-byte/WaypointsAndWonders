@@ -75,3 +75,8 @@ try:
 		print(color_line(line.rstrip()))
 except KeyboardInterrupt:
 	pass
+except (BrokenPipeError, IOError):
+	sys.exit(0)
+except Exception as e:
+	print(f"Error: {e}", file=sys.stderr)
+	sys.exit(1)

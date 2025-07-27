@@ -31,7 +31,7 @@ Flask-Mail==0.10.0
 Flask-Migrate==4.1.0
 Flask-SQLAlchemy==3.1.1
 flask-talisman==1.1.0
-flask_back
+-e git+ssh://git@github.com/Hcha-byte/WaypointsAndWonders.git@086a2037764d160b3f58d171359ff999620b0a03#egg=flask_back
 frozenlist==1.5.0
 greenlet==3.1.1
 h11==0.14.0
@@ -72,6 +72,7 @@ Pygments==2.19.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
 python-slugify==8.0.4
+pytz==2025.2
 PyYAML==6.0.2
 requests==2.32.3
 rich==13.9.4

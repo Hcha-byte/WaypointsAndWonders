@@ -17,7 +17,9 @@ Return overall insights, top targets, and any strange behavior."""
 			},
 			{
 				"role":    "system",
-				"content": "You will be given blacklist information from a honeypot firewall system, the blacklisted IPs were collected from a honeypot system using fake routes. You will summarize the data and provide overall insights, top targets, and any strange behavior."
+				"content": "You will be given blacklist information from a honeypot firewall system, the blacklisted "
+				           "IPs were collected from a honeypot system using fake routes. You will summarize the data "
+				           "and provide overall insights, top targets, and any strange behavior."
 			},
 			{
 				"role":    "system",

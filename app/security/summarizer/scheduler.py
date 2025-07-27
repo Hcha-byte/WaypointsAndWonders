@@ -1,12 +1,15 @@
 import datetime
 import json
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import markdown
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from flask import current_app, Flask
 from flask_mail import Message
+from pytz import timezone
 
 from app.security.ip_blocklist import get_recent_blacklist
 from app.security.summarizer.ai_summary import ai_summary
@@ -46,7 +49,7 @@ def run_hourly_summary(app: Flask):
 			
 			# Combine stats + AI summary
 			full_summary = (f"# AI Summary\n{summary_text}\n\n*Data loaded at "
-			                f"{datetime.datetime.now(ZoneInfo('America/Denver')).strftime('%Y-%m-%d %H:%M:%S %Z')}*\n")
+			                f"{datetime.now(ZoneInfo('America/Denver')).strftime('%Y-%m-%d %H:%M:%S %Z')}*\n")
 			# Save to a file for now — you can extend to DB or email later
 			with path_latest.open("w") as f:
 				f.write(full_summary)
@@ -75,10 +78,37 @@ def init_scheduler(app: Flask):
 	logging.getLogger('smtplib').setLevel(logging.WARNING)
 	
 	# Start the scheduler
-	scheduler = BackgroundScheduler()
-	scheduler.add_job(func=run_hourly_summary, args=list(), kwargs=dict(app=app, ), trigger="interval", hours=24,
-	                  max_instances=1,
-	                  next_run_time=datetime.datetime.now())
+	mountain = timezone("America/Denver")
+	scheduler = BackgroundScheduler(timezone=mountain)
+	now = datetime.now(mountain)
+	run_time = now + timedelta(minutes=1)
+	run_minute = (now.minute + 1) % 60
+	run_hour = now.hour if run_minute > now.minute else (now.hour + 1) % 24
+	
+	job = scheduler.add_job(
+		func=run_hourly_summary,
+		kwargs={"app": app},
+		trigger=CronTrigger(
+			hour=run_hour,
+			minute=run_minute,
+			timezone=mountain,
+			jitter=10
+		),
+		id='test_daily',
+		max_instances=1,
+		misfire_grace_time=60,
+		replace_existing=True
+	)
+	# Add job to run daily at 7:00 AM MDT
+	# scheduler.add_job(
+	# 	func=run_hourly_summary,
+	# 	args=[],
+	# 	kwargs={"app": app},
+	# 	trigger=CronTrigger(hour=12, minute=55, timezone=mountain),
+	# 	max_instances=1,
+	# 	id="daily_summary"
+	# )
+	
 	scheduler.start()
 	
 	# Shutdown scheduler when the app exits
