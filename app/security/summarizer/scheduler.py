@@ -81,33 +81,35 @@ def init_scheduler(app: Flask):
 	mountain = timezone("America/Denver")
 	scheduler = BackgroundScheduler(timezone=mountain)
 	now = datetime.now(mountain)
-	run_time = now + timedelta(minutes=1)
-	run_minute = (now.minute + 1) % 60
-	run_hour = now.hour if run_minute > now.minute else (now.hour + 1) % 24
-	
-	job = scheduler.add_job(
-		func=run_hourly_summary,
-		kwargs={"app": app},
-		trigger=CronTrigger(
-			hour=run_hour,
-			minute=run_minute,
-			timezone=mountain,
-			jitter=10
-		),
-		id='test_daily',
-		max_instances=1,
-		misfire_grace_time=60,
-		replace_existing=True
-	)
-	# Add job to run daily at 7:00 AM MDT
-	# scheduler.add_job(
-	# 	func=run_hourly_summary,
-	# 	args=[],
-	# 	kwargs={"app": app},
-	# 	trigger=CronTrigger(hour=12, minute=55, timezone=mountain),
-	# 	max_instances=1,
-	# 	id="daily_summary"
-	# )
+	if app.config["IS_ON_RAILWAY"]:
+		# Run at 12:55 every day
+		scheduler.add_job(
+			func=run_hourly_summary,
+			args=[],
+			kwargs={"app": app},
+			trigger=CronTrigger(hour=7, minute=0, timezone=mountain),
+			max_instances=1,
+			id="daily_summary"
+		)
+	else:
+		run_time = now + timedelta(minutes=1)
+		run_minute = (now.minute + 1) % 60
+		run_hour = now.hour if run_minute > now.minute else (now.hour + 1) % 24
+		
+		job = scheduler.add_job(
+			func=run_hourly_summary,
+			kwargs={"app": app},
+			trigger=CronTrigger(
+				hour=run_hour,
+				minute=run_minute,
+				timezone=mountain,
+				jitter=10
+			),
+			id='test_daily',
+			max_instances=1,
+			misfire_grace_time=60,
+			replace_existing=True
+		)
 	
 	scheduler.start()
 	
