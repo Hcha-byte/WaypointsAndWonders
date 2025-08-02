@@ -99,7 +99,22 @@ def create_app():
 	app.register_blueprint(honeypot_bp)
 	app.register_blueprint(log_viewer_bp, url_prefix='/log')
 	
-	# </editor-fold>
+	import logging
+	import sys
+	from app.logging.log_colorizer import ColorFormatter
+	
+	# Set up color logging if in interactive terminal
+	if sys.stdout.isatty():
+		handler = logging.StreamHandler(sys.stdout)
+		formatter = ColorFormatter(
+			"[%(asctime)s] [%(levelname)s] %(message)s",
+			datefmt="%Y-%m-%d %H:%M:%S %Z"
+		)
+		handler.setFormatter(formatter)
+		
+		# Don't clear handlers—root logger already has what it needs
+		logging.getLogger("flask.app").setLevel(logging.INFO)
+		logging.getLogger("werkzeug").setLevel(logging.INFO)
 	
 	ensure_index_with_retry()
 	

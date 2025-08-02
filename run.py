@@ -4,6 +4,31 @@ import builtins
 _original_print = builtins.print  # Save original
 # make print flush by default globally
 builtins.print = lambda *args, **kwargs: _original_print(*args, **{**kwargs, "flush": True})
+import logging
+import sys
+from app.logging.log_colorizer import ColorFormatter
+
+formatter = ColorFormatter("[%(asctime)s] [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S %Z")
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(formatter)
+
+logging.basicConfig(
+	level=logging.INFO,
+	handlers=[handler],
+	force=True  # override all handlers
+)
+
+# Optional: individually set other loggers
+for name in ["hypercorn.access", "werkzeug", "hypercorn.error"]:
+	logger = logging.getLogger(name)
+	logger.handlers.clear()
+	logger.addHandler(handler)
+	logger.setLevel(logging.DEBUG)
+
+# Test output
+logging.getLogger("hypercorn.access").info("✅ hypercorn.access logger works")
+logging.getLogger("werkzeug").info("✅ werkzeug logger works")
+logging.getLogger().info("✅ root logger works")
 
 from flask import render_template, request
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -14,6 +39,26 @@ from app.security.ip_blocklist import get_real_ip
 
 app = create_app()
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
+
+import asyncio
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
+
+
+async def main():
+	config = Config()
+	config.bind = ["0.0.0.0:5000"]
+	config.certfile = "cert.pem"
+	config.keyfile = "key.pem"
+	config.accesslog = "-"
+	config.access_log_format = ' -- %(r)s %(s)s'
+	import pathlib
+	
+	config.logconfig = str(pathlib.Path("hypercorn_log_config.ini"))
+	config.loglevel = "info"
+	# Add any other Hypercorn config options here
+	
+	await serve(app, config)
 
 
 # <editor-fold desc="Error handlers">
@@ -55,4 +100,4 @@ def make_shell_context():
 # </editor-fold>
 
 if __name__ == '__main__':
-	app.run(debug=True, port=5000, host='0.0.0.0', ssl_context=('cert.pem', 'key.pem'))
+	asyncio.run(main())

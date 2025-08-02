@@ -32,7 +32,8 @@ response to any behavior they deem inappropriate.
 
 ## Enforcement
 
-Violations may be reported by opening an issue or contacting `Hcha.Byte@gmail.com`. All complaints will be reviewed and
+Violations may be reported by opening an issue or contacting [Hcha.Byte@gmail.com](mailto:Hcha.Byte@gmail.com). All
+complaints will be reviewed and
 investigated promptly and fairly.
 
 ## Attribution
