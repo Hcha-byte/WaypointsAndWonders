@@ -48,8 +48,9 @@ from hypercorn.config import Config
 async def main():
 	config = Config()
 	config.bind = ["0.0.0.0:5000"]
-	config.certfile = "cert.pem"
-	config.keyfile = "key.pem"
+	if not app.config["IS_ON_RAILWAY"]:
+		config.certfile = "cert.pem"
+		config.keyfile = "key.pem"
 	config.accesslog = "-"
 	config.access_log_format = ' -- %(r)s %(s)s'
 	import pathlib
