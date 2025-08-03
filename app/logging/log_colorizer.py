@@ -1,13 +1,6 @@
 # app/logging/log_colorizer.py
 import logging
-import os
 import re
-import sys
-
-# ... (rest of your ColorFormatter and LOGGING_CONFIG)
-
-print(f"DEBUG: PYTHONPATH in log_colorizer.py: {os.environ.get('PYTHONPATH')}", file=sys.stderr)
-print(f"DEBUG: sys.path in log_colorizer.py: {sys.path}", file=sys.stderr)
 
 # ANSI color codes
 COLORS = {
@@ -77,50 +70,6 @@ class ColorFormatter(logging.Formatter):
 		
 		return line
 
-
-import sys
-
-LOGGING_CONFIG = {
-	'version':                  1,
-	'disable_existing_loggers': False,
-	'formatters':               {
-		'colored_formatter': {
-			'()':      'app.logging.log_colorizer.ColorFormatter',
-			'format':  "[%(asctime)s] [%(levelname)s] %(message)s",
-			'datefmt': "%Y-%m-%d %H:%M:%S %Z",
-		},
-	},
-	'handlers':                 {
-		'console': {
-			'class':     'logging.StreamHandler',
-			'formatter': 'colored_formatter',
-			'level':     'DEBUG',
-			'stream':    sys.stdout,
-		},
-	},
-	'loggers':                  {
-		'hypercorn.access': {
-			'handlers':  ['console'],
-			'level':     'DEBUG',
-			'propagate': False,
-		},
-		'hypercorn.error':  {
-			'handlers':  ['console'],
-			'level':     'DEBUG',
-			'propagate': False,
-		},
-		'werkzeug':         {
-			'handlers':  ['console'],
-			'level':     'DEBUG',
-			'propagate': False,
-		},
-		'':                 {  # Root logger
-			'handlers':  ['console'],
-			'level':     'INFO',
-			'propagate': False,
-		},
-	},
-}
 
 ### For testing only ###
 if __name__ == "__main__":

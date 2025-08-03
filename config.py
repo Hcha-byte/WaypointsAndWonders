@@ -6,8 +6,8 @@ def is_running_on_railway():
 
 
 class Config:
-	SECRET_KEY = os.environ.get('SECRET_KEY', 'you_will_never_guess')
-	SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '')
+	SECRET_KEY = os.environ.get("SECRET_KEY", "you_will_never_guess")
+	SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "")
 	
 	TYPESENSE_API_KEY = os.environ.get("TYPESENSE_API_KEY", "")
 	TYPESENSE_HOST = os.environ.get("TYPESENSE_HOST", "")

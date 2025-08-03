@@ -52,28 +52,43 @@ def to_ndjson(docs):
 
 import time
 import typesense
+from flask import Flask
 
 
-def ensure_index_with_retry(client=None, collection_name=COLLECTION_NAME, max_attempts=5, delay=3):
+def ensure_index_with_retry(client=None, collection_name=COLLECTION_NAME, max_attempts=5, delay=3, app: Flask = None):
 	if client is None:
 		from app.extensions import get_typesense_client
 		client = get_typesense_client()
 	for attempt in range(max_attempts):
 		try:
 			client.collections[collection_name].retrieve()
-			print("✅ Typesense index is ready.")
+			if app is not None:
+				app.logger.info(f"✅ Typesense is ready.")
+			else:
+				print(f"✅ Typesense is ready.")
 			return ensure_index()
 		except typesense.exceptions.ObjectNotFound:
-			print(f"⚠️  Collection '{collection_name}' not found.")
+			if app is not None:
+				app.logger.warning(f"⚠️  Collection '{collection_name}' not found.")
+			else:
+				print(f"⚠️  Collection '{collection_name}' not found.")
 			return None  # or create it here if needed
 		except typesense.exceptions.TypesenseClientError as e:
-			print(f"❌ Error talking to Typesense (attempt {attempt + 1}): {e}")
+			if app is not None:
+				app.logger.info(f"❌ Error talking to Typesense (attempt {attempt + 1}): {e}")
+			else:
+				print(f"❌ Error talking to Typesense (attempt {attempt + 1}): {e}")
 			time.sleep(delay)
 		except Exception as e:
-			print(f"🔥 Unexpected error (attempt {attempt + 1}): {e}")
+			if app is not None:
+				app.logger.error(f"🔥 Unexpected error (attempt {attempt + 1}): {e}")
+			else:
+				print(f"🔥 Unexpected error (attempt {attempt + 1}): {e}")
 			time.sleep(delay)
-	
-	print("❌ Failed to connect to Typesense after multiple attempts.")
+	if app is not None:
+		app.logger.error("❌ Failed to connect to Typesense after multiple attempts.")
+	else:
+		print("❌ Failed to connect to Typesense after multiple attempts.")
 	return None
 
 

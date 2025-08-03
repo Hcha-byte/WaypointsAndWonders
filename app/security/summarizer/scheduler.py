@@ -25,7 +25,6 @@ def update_recent_blacklist_file():
 
 
 def run_hourly_summary(app: Flask):
-	print("Starting honeypot job")
 	with app.app_context():
 		from app.extensions import mail
 		update_recent_blacklist_file()

@@ -116,7 +116,7 @@ def create_app():
 		logging.getLogger("flask.app").setLevel(logging.INFO)
 		logging.getLogger("werkzeug").setLevel(logging.INFO)
 	
-	ensure_index_with_retry()
+	ensure_index_with_retry(app=app)
 	
 	return app
 # </editor-fold>
