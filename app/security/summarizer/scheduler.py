@@ -73,7 +73,9 @@ def init_scheduler(app: Flask):
 	import smtplib
 	smtplib.SMTP.set_debuglevel = lambda self, level=0: None  # disable all debuglevel changes
 	
-	# Suppress smtplib debug logs by setting its logger to WARNING or higher
+	# Suppress smtplib debug logs by setting it's logger to WARNING or higher
+	# Set the logging level for APScheduler
+	logging.getLogger('apscheduler').setLevel(logging.WARNING)
 	logging.getLogger('smtplib').setLevel(logging.WARNING)
 	
 	# Start the scheduler
@@ -115,4 +117,4 @@ def init_scheduler(app: Flask):
 	# Shutdown scheduler when the app exits
 	import atexit
 	atexit.register(lambda: scheduler.shutdown())
-	app.logger.info("APScheduler started for honeypot log summaries")
+	app.logger.debug("APScheduler started for honeypot log summaries")

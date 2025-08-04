@@ -63,7 +63,7 @@ def ensure_index_with_retry(client=None, collection_name=COLLECTION_NAME, max_at
 		try:
 			client.collections[collection_name].retrieve()
 			if app is not None:
-				app.logger.info(f"✅ Typesense is ready.")
+				app.logger.debug(f"✅ Typesense is ready.")
 			else:
 				print(f"✅ Typesense is ready.")
 			return ensure_index()

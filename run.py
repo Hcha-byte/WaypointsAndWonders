@@ -23,12 +23,7 @@ for name in ["hypercorn.access", "werkzeug", "hypercorn.error"]:
 	logger = logging.getLogger(name)
 	logger.handlers.clear()
 	logger.addHandler(handler)
-	logger.setLevel(logging.DEBUG)
-
-# Test output
-logging.getLogger("hypercorn.access").info("✅ hypercorn.access logger works")
-logging.getLogger("werkzeug").info("✅ werkzeug logger works")
-logging.getLogger().info("✅ root logger works")
+	logger.setLevel(logging.INFO)
 
 from flask import render_template, request
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -59,7 +54,7 @@ async def main():
 	config.loglevel = "info"
 	# Add any other Hypercorn config options here
 	
-	await serve(app, config)
+	await serve(app, config, mode="wsgi")
 
 
 # <editor-fold desc="Error handlers">
