@@ -24,5 +24,6 @@ class Config:
 	IS_ON_RAILWAY: bool = is_running_on_railway()
 	
 	from typing import Literal
-	
-	LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+	LOG_LEVELS = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+	LOG_LEVEL: LOG_LEVELS
+	LOG_LEVEL = "INFO"

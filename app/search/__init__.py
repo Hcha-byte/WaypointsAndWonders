@@ -55,10 +55,11 @@ import typesense
 from flask import Flask
 
 
-def ensure_index_with_retry(client=None, collection_name=COLLECTION_NAME, max_attempts=5, delay=3, app: Flask = None):
+def ensure_index_with_retry(client=None, collection_name=COLLECTION_NAME, max_attempts=5, delay=1, app: Flask = None):
 	if client is None:
 		from app.extensions import get_typesense_client
 		client = get_typesense_client()
+	# warm up the typesense engage from a clod start
 	for attempt in range(max_attempts):
 		try:
 			client.collections[collection_name].retrieve()
@@ -72,10 +73,10 @@ def ensure_index_with_retry(client=None, collection_name=COLLECTION_NAME, max_at
 				app.logger.warning(f"⚠️  Collection '{collection_name}' not found.")
 			else:
 				print(f"⚠️  Collection '{collection_name}' not found.")
-			return None  # or create it here if needed
+			return ensure_index()
 		except typesense.exceptions.TypesenseClientError as e:
 			if app is not None:
-				app.logger.info(f"❌ Error talking to Typesense (attempt {attempt + 1}): {e}")
+				app.logger.debug(f"❌ Error talking to Typesense (attempt {attempt + 1}): {e}")
 			else:
 				print(f"❌ Error talking to Typesense (attempt {attempt + 1}): {e}")
 			time.sleep(delay)

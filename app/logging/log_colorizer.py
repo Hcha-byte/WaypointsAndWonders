@@ -69,6 +69,15 @@ class ColorFormatter(logging.Formatter):
 			)
 		
 		return line
+	
+	def formatTime(self, record, datefmt=None):
+		from datetime import datetime
+		import pytz
+		
+		dt = datetime.fromtimestamp(record.created, pytz.timezone("America/Denver"))
+		if datefmt:
+			return dt.strftime(datefmt)
+		return dt.isoformat()
 
 
 ### For testing only ###
