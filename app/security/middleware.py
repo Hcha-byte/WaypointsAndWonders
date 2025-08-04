@@ -30,7 +30,7 @@ csp = {
 		"https://code.jquery.com",
 		# ✅ Required for reCAPTCHA
 		"https://www.google.com/recaptcha/api.js",
-		"https://www.gstatic.com/recaptcha/releases/_cn5mBoBXIA0_T7xBjxkUqUA/recaptcha__en.js"
+		"https://www.gstatic.com/"
 	],
 	'style-src':       [
 		"'self'",

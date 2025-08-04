@@ -101,4 +101,8 @@ def make_shell_context():
 # </editor-fold>
 
 if __name__ == '__main__':
-	asyncio.run(main())
+	try:
+		asyncio.run(main())
+	except Exception as e:
+		logging.getLogger().exception("🚨 Server failed to start")
+		raise
