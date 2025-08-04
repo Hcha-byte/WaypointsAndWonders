@@ -103,20 +103,19 @@ def create_app():
 	import sys
 	from app.logging.log_colorizer import ColorFormatter
 	
-	# Set up color logging if in interactive terminal
-	if sys.stdout.isatty():
-		handler = logging.StreamHandler(sys.stdout)
-		formatter = ColorFormatter(
-			"[%(asctime)s] [%(levelname)s] %(message)s",
-			datefmt="%Y-%m-%d %H:%M:%S %Z"
-		)
-		handler.setFormatter(formatter)
-		
-		# Don't clear handlers—root logger already has what it needs
-		logging.getLogger("flask.app").setLevel(logging.INFO)
-		logging.getLogger("werkzeug").setLevel(logging.INFO)
+	handler = logging.StreamHandler(sys.stdout)
+	formatter = ColorFormatter(
+		"[%(asctime)s] [%(levelname)s] %(message)s",
+		datefmt="%Y-%m-%d %H:%M:%S %Z"
+	)
+	handler.setFormatter(formatter)
+	log_level = app.config["LOG_LEVEL"]
+	# Don't clear handlers—root logger already has what it needs
+	logging.getLogger("flask.app").setLevel(log_level)
+	logging.getLogger("app").setLevel(log_level)
+	logging.getLogger("werkzeug").setLevel(log_level)
 	
 	ensure_index_with_retry(app=app)
-	
+	logging.getLogger("flask.app").debug("🚀 Server started")
 	return app
 # </editor-fold>

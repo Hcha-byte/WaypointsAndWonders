@@ -38,8 +38,23 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 import asyncio
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
+from pathlib import Path
+
+INIT_FILE = Path("hypercorn_log_config.ini")
+INIT_FILE_TEMPLATE = Path("hypercorn_log_config.ini.j2")
+
+# noinspection PyTypeChecker
+from jinja2 import Environment, FileSystemLoader
 
 
+def load_init_file_for_logs():
+	env = Environment(loader=FileSystemLoader("."))
+	template = env.get_template("hypercorn_log_config.ini.j2")
+	config_str = template.render(log_level=app.config["LOG_LEVEL"])
+	INIT_FILE.write_text(config_str)
+
+
+# noinspection PyTypeChecker
 async def main():
 	config = Config()
 	config.bind = ["0.0.0.0:5000"]
@@ -48,9 +63,8 @@ async def main():
 		config.keyfile = "key.pem"
 	config.accesslog = "-"
 	config.access_log_format = ' -- %(r)s %(s)s'
-	import pathlib
-	
-	config.logconfig = str(pathlib.Path("hypercorn_log_config.ini"))
+	load_init_file_for_logs()
+	config.logconfig = str(INIT_FILE)
 	config.loglevel = "info"
 	# Add any other Hypercorn config options here
 	

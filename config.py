@@ -22,3 +22,7 @@ class Config:
 	TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY", "")
 	
 	IS_ON_RAILWAY: bool = is_running_on_railway()
+	
+	from typing import Literal
+	
+	LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
