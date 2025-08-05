@@ -1,6 +1,7 @@
 import json
 
 import together
+from flask import send_from_directory
 
 
 def ai_summary(data: dict) -> str:
@@ -23,7 +24,8 @@ Return overall insights, top targets, and any strange behavior."""
 			},
 			{
 				"role":    "system",
-				"content": "You will respond in markdown format with out using tables."
+				"content": "You will respond in markdown format. Use the following template:"
+				           f"\n\n\n{send_from_directory('html', 'test2.html')}"
 			}
 		
 		]

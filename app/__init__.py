@@ -114,8 +114,10 @@ def create_app():
 	logging.getLogger("flask.app").setLevel(log_level)
 	logging.getLogger("app").setLevel(log_level)
 	logging.getLogger("werkzeug").setLevel(log_level)
+	logging.getLogger("urllib3").setLevel(log_level)
+	logging.getLogger("requests").setLevel(log_level)
 	
 	ensure_index_with_retry(app=app)
-	logging.getLogger("flask.app").debug("🚀 Server started")
+	app.logger.debug("🚀 Server started")
 	return app
 # </editor-fold>

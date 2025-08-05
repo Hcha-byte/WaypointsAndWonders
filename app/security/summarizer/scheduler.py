@@ -2,9 +2,7 @@ import datetime
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
-import markdown
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from flask import current_app, Flask
@@ -47,8 +45,7 @@ def run_hourly_summary(app: Flask):
 				summary_text = ai_summary(data)
 			
 			# Combine stats + AI summary
-			full_summary = (f"# AI Summary\n{summary_text}\n\n*Data loaded at "
-			                f"{datetime.now(ZoneInfo('America/Denver')).strftime('%Y-%m-%d %H:%M:%S %Z')}*\n")
+			full_summary = summary_text
 			# Save to a file for now — you can extend to DB or email later
 			with path_latest.open("w") as f:
 				f.write(full_summary)
@@ -56,10 +53,10 @@ def run_hourly_summary(app: Flask):
 				# 4. Create and send email
 				msg = Message(
 					subject="Daily Honeypot Summary",
-					recipients=["hcha.byte@gmail.com"]
+					recipients=["hcha.byte@gmail.com"],
+					html=full_summary
 				)
 				
-				msg.html = markdown.markdown(full_summary, output_format="html")
 				mail.send(msg)
 			
 			current_app.logger.info("Hourly honeypot log summary job finished successfully")
