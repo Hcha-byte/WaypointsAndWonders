@@ -13,7 +13,7 @@ from app.security.ip_blocklist import get_recent_blacklist
 from app.security.summarizer.ai_summary import ai_summary
 from ..config import RECENT_BLACKLIST_FILE, get_data_path
 
-path_latest = Path(get_data_path("summary_latest.md"))
+path_latest = Path(get_data_path("summary_latest.html"))
 
 
 def update_recent_blacklist_file():

@@ -1,11 +1,16 @@
 import json
+from pathlib import Path
 
 import together
-from flask import send_from_directory
 
 
-def ai_summary(data: dict) -> str:
+def ai_summary(data: dict) -> str:  # HTML
 	client = together.Client()
+	html = Path("app/security/summarizer/html/test2.html")
+	
+	with html.open("r", encoding="utf-8") as f:
+		html_content = f.read()
+	
 	prompt = f"""Summarize the following blacklist data from a honeypot firewall system:
 {json.dumps(data, indent=2)}
 Return overall insights, top targets, and any strange behavior."""
@@ -24,10 +29,14 @@ Return overall insights, top targets, and any strange behavior."""
 			},
 			{
 				"role":    "system",
-				"content": "You will respond in markdown format. Use the following template:"
-				           f"\n\n\n{send_from_directory('html', 'test2.html')}"
+				"content": "You will respond in html format, only include the html. Use the following template:"
+				           f"\n\n\n{html_content}"
 			}
 		
 		]
 	)
-	return str(response.choices[0].message.content)
+	html_content = response.choices[0].message.content
+	doctype_index = html_content.find("<!DOCTYPE html>")
+	if doctype_index != -1:
+		html_content = html_content[doctype_index:]
+	return html_content

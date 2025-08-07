@@ -61,7 +61,9 @@ async def main():
 	if not app.config["IS_ON_RAILWAY"]:
 		config.certfile = "cert.pem"
 		config.keyfile = "key.pem"
-	config.accesslog = "-"
+	
+	from app.security.config import get_data_path
+	config.accesslog = f"{get_data_path('access.log').as_posix()}"
 	config.access_log_format = ' -- %(r)s %(s)s'
 	load_init_file_for_logs()
 	config.logconfig = str(INIT_FILE)

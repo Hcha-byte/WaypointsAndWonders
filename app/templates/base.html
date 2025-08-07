@@ -12,6 +12,19 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 	<link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 	<!-- ✅ Load jQuery first -->
+
+
+	<script>
+		const HEARTBEAT_INTERVAL = 30000; // 30 seconds
+
+		function sendHeartbeat() {
+		  navigator.sendBeacon("/heartbeat");
+		}
+
+		setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
+		sendHeartbeat();  // Send once on page load
+	</script>
+
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<!-- Lightbox2 CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" rel="stylesheet">

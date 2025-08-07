@@ -118,6 +118,8 @@ def create_app():
 	logging.getLogger("requests").setLevel(log_level)
 	
 	ensure_index_with_retry(app=app)
+	from app.visitor_logging import register_single_visit_logger
+	register_single_visit_logger(app)
 	app.logger.debug("🚀 Server started")
 	return app
 # </editor-fold>

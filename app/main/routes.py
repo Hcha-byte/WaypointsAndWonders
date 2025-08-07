@@ -1,6 +1,7 @@
-import datetime
+from datetime import datetime, timezone, timedelta
 
-from flask import render_template, Response, render_template_string, url_for, redirect, request, send_from_directory
+from flask import render_template, Response, render_template_string, url_for, redirect, request, send_from_directory, \
+	session
 from flask_login import current_user
 from sqlalchemy import desc
 
@@ -40,6 +41,27 @@ def home():
 		return render_template('index.html', title='Home', posts=None)
 
 
+LAST_SEEN_TIME = 1
+
+
+@main_bp.route("/heartbeat", methods=["POST"])
+def heartbeat():
+	now = datetime.now(tz=timezone.utc)
+	last_seen_str = session.get("last_heartbeat")
+	
+	if last_seen_str:
+		last_seen = datetime.fromisoformat(last_seen_str)
+	else:
+		last_seen = now - timedelta(minutes=LAST_SEEN_TIME + 1)  # force a visit log
+	
+	# If it's been more than 10 minutes since the last heartbeat
+	if now - last_seen > timedelta(minutes=LAST_SEEN_TIME):
+		session["visited"] = False  # trigger new visit log
+	
+	session["last_heartbeat"] = now.isoformat()
+	return "", 204
+
+
 @main_bp.route("/search")
 def search():
 	query = request.args.get("q", "")
@@ -54,7 +76,7 @@ def search():
 def sitemap():
 	"""Generate an XML sitemap dynamically from the database."""
 	base_url = "https://waypointsandwonders.com"
-	lastmod = datetime.datetime.now().strftime("%Y-%m-%d")
+	lastmod = datetime.now().strftime("%Y-%m-%d")
 	urls = [
 		{"loc": f"{base_url}{url_for('main.welcome')}", "lastmod": lastmod, "priority": "0.7"},
 		{"loc": f"{base_url}{url_for('main.home')}", "lastmod": lastmod, "priority": "1.0"},

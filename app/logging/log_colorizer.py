@@ -1,5 +1,4 @@
 # app/logging/log_colorizer.py
-import logging
 import re
 
 # ANSI color codes
@@ -15,6 +14,20 @@ COLORS = {
 	'bold_white':  "\033[1;97m",  # Bold and Bright White for routes
 	'bold_yellow': "\033[1;93m",  # Bold and Bright Yellow for routes
 }
+
+# app/logging/handlers.py
+import logging
+from app.security.config import get_data_path
+
+
+class FileHandler(logging.FileHandler):
+	def __init__(self, filename, *args, **kwargs):
+		full_path = get_data_path(filename)
+		super().__init__(full_path, *args, **kwargs)
+	
+	def emit(self, record):
+		super().emit(record)
+		self.stream.flush()
 
 
 class ColorFormatter(logging.Formatter):

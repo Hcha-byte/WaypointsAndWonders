@@ -2,7 +2,7 @@
 keys=root,hypercorn.access,hypercorn.error,werkzeug
 
 [handlers]
-keys=console
+keys=console, FileHandler
 
 [formatters]
 keys=colored_formatter
@@ -13,7 +13,7 @@ handlers=console
 
 [logger_hypercorn.access]
 level={{ log_level }}
-handlers=console
+handlers=FileHandler
 qualname=hypercorn.access
 propagate=0
 
@@ -34,6 +34,12 @@ class=StreamHandler
 level={{ log_level }}
 formatter=colored_formatter
 args=(sys.stdout,)
+
+[handler_FileHandler]
+class=app.logging.log_colorizer.FileHandler
+level={{ log_level }}
+formatter=colored_formatter
+args=("access.log",)
 
 [formatter_colored_formatter]
 class=app.logging.log_colorizer.ColorFormatter

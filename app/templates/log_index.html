@@ -2,7 +2,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="content">Log Viewer</h1>
+<div class="content">
+
+	<button type="button" class="button"><a href="{{ url_for('log_viewer.view_trap_hits') }}">View Blacklist</a>
+	</button>
+	<button type="button" class="button"><a href="{{ url_for('log_viewer.view_honeypot_log') }}">View Honeypot Log</a>
+	</button>
+	<button type="button" class="button"><a href="{{ url_for('log_viewer.view_middleware_log') }}">View Middleware
+		Log</a></button>
+	<button type="button" class="button"><a href="{{ url_for('log_viewer.show_ip') }}">View IP</a></button>
+
+</div>
+<h1 class="content">Honeypot Summary</h1>
 <div class="content">
 	{{ html|safe }}
 </div>
