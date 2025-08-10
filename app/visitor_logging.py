@@ -19,19 +19,32 @@ def register_single_visit_logger(app: Flask):
 		
 		ua_under = ua.lower()
 		
-		# Common real browsers (can expand this as needed)
+		# Blacklist: reject immediately if bot-like
+		bot_signatures = [
+			'bot',
+			'spider',
+			'crawler',
+			'slurp',
+			'archive',
+			'headless',
+			'phantom',
+			'compatible;',
+			'googlebot'
+		]
+		if any(sig in ua_under for sig in bot_signatures):
+			return
+		
+		# Whitelist: allow only if known browser
 		browser_signatures = [
 			'chrome',
 			'firefox',
 			'safari',  # Includes mobile Safari
-			'edg',  # Microsoft Edge uses 'Edg'
+			'edg',  # Microsoft Edge
 			'opera',
-			'opr/',  # Opera on Blink engine
+			'opr/',  # Opera
 			'vivaldi',
 			'brave'
 		]
-		
-		# If no known browser signature is found, skip logging
 		if not any(sig in ua_under for sig in browser_signatures):
 			return
 		
