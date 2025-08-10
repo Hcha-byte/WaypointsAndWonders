@@ -1,5 +1,5 @@
 import requests
-from flask import render_template, flash, redirect, url_for, request, current_app
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 
@@ -84,7 +84,7 @@ def signup():
 		# Verify reCAPTCHA with Google
 		verify_url = 'https://www.google.com/recaptcha/api/siteverify'
 		data = {
-			'secret':   current_app.config['RECAPTCHA_SECRET_KEY'],
+			'secret':   current_app.config['GOOGLE_RECAPTCHA'],
 			'response': recaptcha_response,
 			'remoteip': request.remote_addr
 		}

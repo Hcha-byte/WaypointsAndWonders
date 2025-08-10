@@ -1,7 +1,5 @@
 # app/visitor_logging.py
-from datetime import datetime
 
-import pytz
 from flask import request, session, current_app, Flask
 
 
@@ -12,14 +10,33 @@ def register_single_visit_logger(app: Flask):
 			return  # Already logged this session
 		
 		# Ignore non-page requests and heartbeat
+		ua = request.user_agent.string
 		path = request.path
 		if path.startswith(('/static', '/favicon')) or path == "/heartbeat":
 			return
+		if not ua:  # Handles None or empty string
+			return
+		
+		ua_under = ua.lower()
+		
+		# Common real browsers (can expand this as needed)
+		browser_signatures = [
+			'chrome',
+			'firefox',
+			'safari',  # Includes mobile Safari
+			'edg',  # Microsoft Edge uses 'Edg'
+			'opera',
+			'opr/',  # Opera on Blink engine
+			'vivaldi',
+			'brave'
+		]
+		
+		# If no known browser signature is found, skip logging
+		if not any(sig in ua_under for sig in browser_signatures):
+			return
 		
 		ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-		ua = request.user_agent.string
-		timestamp = datetime.now(pytz.timezone("America/Denver")).strftime("%Y-%m-%d %H:%M:%S")
 		
-		current_app.logger.info(f"[{timestamp}] New visitor: IP={ip} | UA={ua}")
+		current_app.logger.info(f"Visitor: IP={ip} | UA={ua}")
 		
 		session["visited"] = True

@@ -20,10 +20,7 @@ class Config:
 	CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "")
 	
 	TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY", "")
-	
 	IS_ON_RAILWAY: bool = is_running_on_railway()
 	
 	from typing import Literal
-	LOG_LEVELS = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-	LOG_LEVEL: LOG_LEVELS
-	LOG_LEVEL = "INFO"
+	LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
